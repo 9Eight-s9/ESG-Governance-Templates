@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ESG Scope 1/2/3 Emissions Inventory — B.3</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ══ TOP BRAND BAR ═══════════════════════════════════════════ -->
+<div class="brand-bar">
+  <div class="brand-bar-inner">
+    <div class="brand-title">Experts | Tools | Templates &mdash; From the Book &mdash; <span class="brand-highlight">ESG Master Classes</span></div>
+    <div class="brand-author">By Dr. SNK &nbsp;|&nbsp; AI Evangelist &nbsp;|&nbsp; A 98s9 Production</div>
+  </div>
+</div>
+
+<!-- ══ SITE HEADER ════════════════════════════════════════════ -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <span class="header-badge">B.3</span>
+      <div>
+        <div class="header-title">Scope 1 / 2 / 3 Emissions Inventory Worksheet</div>
+        <div class="header-sub">GHG Protocol · ESRS E1 · BRSR Core · ISSB IFRS S2 · SBTi · CDP Climate — 56 emission sources across all three scopes</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" onclick="resetAll()">↺ Reset</button>
+      <button class="btn btn-ghost" onclick="exportJSON()">⬇ Export</button>
+      <button class="btn btn-ghost" onclick="importJSON()">⬆ Import</button>
+      <button class="btn btn-ghost" onclick="exportCSV()">📄 CSV</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨 Print</button>
+    </div>
+  </div>
+</header>
+
+<!-- ══ TAB NAV ════════════════════════════════════════════════ -->
+<nav class="tab-nav">
+  <div class="tab-nav-inner">
+    <button class="tab-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">
+      <span class="tab-icon">📊</span><span class="tab-label">Dashboard</span>
+    </button>
+    <button class="tab-btn" data-tab="guide" onclick="switchTab('guide')">
+      <span class="tab-icon">📖</span><span class="tab-label">Guide &amp; Formula</span>
+    </button>
+    <button class="tab-btn" data-tab="S1" onclick="switchTab('S1')">
+      <span class="tab-icon">🔥</span><span class="tab-label">Scope 1</span>
+      <span class="tab-badge" id="badge-S1">9</span>
+    </button>
+    <button class="tab-btn" data-tab="S2" onclick="switchTab('S2')">
+      <span class="tab-icon">⚡</span><span class="tab-label">Scope 2</span>
+      <span class="tab-badge" id="badge-S2">5</span>
+    </button>
+    <button class="tab-btn" data-tab="S3" onclick="switchTab('S3')">
+      <span class="tab-icon">🌐</span><span class="tab-label">Scope 3</span>
+      <span class="tab-badge" id="badge-S3">42</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ══ PROGRESS STRIP ═════════════════════════════════════════ -->
+<div class="progress-strip">
+  <div class="progress-strip-inner">
+    <span id="progressLabel">0 / 56 sources entered</span>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span id="progressPct">0%</span>
+  </div>
+</div>
+
+<!-- ══ TAB PANELS ════════════════════════════════════════════ -->
+<main class="tab-panels">
+
+  <!-- ── DASHBOARD ─────────────────────────────────────────── -->
+  <div class="tab-panel active" id="panel-dashboard">
+    <div class="panel-scroll">
+
+      <!-- Org Details -->
+      <section class="dash-section org-section">
+        <div class="section-hd">
+          <span class="section-hd-icon">🏢</span>
+          <h2>Organisation Details</h2>
+          <span class="section-hd-sub">Required for regulatory filings and exported reports</span>
+        </div>
+        <div class="org-grid">
+          <div class="fg"><label class="fl">Organisation Name</label>
+            <input type="text" class="fi" id="orgName" placeholder="e.g. Acme Manufacturing Ltd"/></div>
+          <div class="fg"><label class="fl">Industry / Sector</label>
+            <input type="text" class="fi" id="orgIndustry" placeholder="e.g. Pharmaceutical Manufacturing"/></div>
+          <div class="fg"><label class="fl">Reporting Year</label>
+            <input type="text" class="fi" id="orgPeriod" placeholder="e.g. FY 2025–26 (April–March)"/></div>
+          <div class="fg"><label class="fl">Base Year</label>
+            <input type="text" class="fi" id="orgBaseYear" placeholder="e.g. 2019 (pre-COVID baseline)"/></div>
+          <div class="fg"><label class="fl">GHG Protocol Boundary</label>
+            <select class="fi" id="orgBoundary">
+              <option value="">Select boundary approach</option>
+              <option>Operational Control</option>
+              <option>Financial Control</option>
+              <option>Equity Share</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">Reporting Frameworks</label>
+            <input type="text" class="fi" id="orgFramework" placeholder="e.g. GHG Protocol, ESRS E1, BRSR Core"/></div>
+          <div class="fg"><label class="fl">Assurance Level</label>
+            <select class="fi" id="orgAssurance">
+              <option value="">Select assurance level</option>
+              <option>No external assurance</option>
+              <option>Limited assurance (ISAE 3410)</option>
+              <option>Reasonable assurance (ISAE 3410)</option>
+              <option>BRSR Core mandatory assurance</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">Lead Contact</label>
+            <input type="text" class="fi" id="orgLead" placeholder="e.g. Head of ESG / CFO"/></div>
+          <div class="fg"><label class="fl">Date Prepared</label>
+            <input type="date" class="fi" id="orgDate"/></div>
+        </div>
+      </section>
+
+      <!-- KPI summary -->
+      <section class="dash-section">
+        <div class="section-hd">
+          <span class="section-hd-icon">📈</span>
+          <h2>Emissions Summary</h2>
+          <span class="section-hd-sub">All figures in tCO₂e · Updated live as you enter data</span>
+        </div>
+        <div class="kpi-row">
+          <div class="kpi-card kpi-total">
+            <div class="kpi-val" id="kpiTotal">—</div>
+            <div class="kpi-label">Total tCO₂e</div>
+            <div class="kpi-sub">All scopes combined</div>
+          </div>
+          <div class="kpi-card kpi-s1">
+            <div class="kpi-val" id="kpiS1">—</div>
+            <div class="kpi-label">Scope 1 tCO₂e</div>
+            <div class="kpi-sub" id="kpiS1pct">Direct emissions</div>
+          </div>
+          <div class="kpi-card kpi-s2lb">
+            <div class="kpi-val" id="kpiS2LB">—</div>
+            <div class="kpi-label">Scope 2 (Location)</div>
+            <div class="kpi-sub" id="kpiS2LBpct">Purchased energy</div>
+          </div>
+          <div class="kpi-card kpi-s2mb">
+            <div class="kpi-val" id="kpiS2MB">—</div>
+            <div class="kpi-label">Scope 2 (Market)</div>
+            <div class="kpi-sub">With renewable contracts</div>
+          </div>
+          <div class="kpi-card kpi-s3">
+            <div class="kpi-val" id="kpiS3">—</div>
+            <div class="kpi-label">Scope 3 tCO₂e</div>
+            <div class="kpi-sub" id="kpiS3pct">Value chain</div>
+          </div>
+        </div>
+
+        <!-- Intensity metrics -->
+        <div class="intensity-row" id="intensityRow">
+          <div class="intensity-field-group">
+            <label class="fl">Revenue (£/$/₹ million) — for intensity calculation</label>
+            <input type="number" class="fi" id="orgRevenue" placeholder="e.g. 250" oninput="updateDashboard()" min="0" step="0.01"/>
+          </div>
+          <div class="intensity-field-group">
+            <label class="fl">Number of Employees</label>
+            <input type="number" class="fi" id="orgEmployees" placeholder="e.g. 1500" oninput="updateDashboard()" min="0"/>
+          </div>
+          <div class="intensity-field-group">
+            <label class="fl">Production Volume (units / tonnes — optional)</label>
+            <input type="text" class="fi" id="orgProduction" placeholder="e.g. 50,000 tonnes product" oninput="updateDashboard()"/>
+          </div>
+        </div>
+        <div class="kpi-row kpi-row-sm" id="intensityKPIs">
+          <div class="kpi-card kpi-int">
+            <div class="kpi-val kpi-val-sm" id="kpiIntRev">—</div>
+            <div class="kpi-label">tCO₂e / £m Revenue</div>
+            <div class="kpi-sub">Carbon intensity</div>
+          </div>
+          <div class="kpi-card kpi-int">
+            <div class="kpi-val kpi-val-sm" id="kpiIntEmp">—</div>
+            <div class="kpi-label">tCO₂e / Employee</div>
+            <div class="kpi-sub">Per-capita footprint</div>
+          </div>
+          <div class="kpi-card kpi-int">
+            <div class="kpi-val kpi-val-sm" id="kpiS3share">—</div>
+            <div class="kpi-label">Scope 3 Share</div>
+            <div class="kpi-sub">% of total footprint</div>
+          </div>
+          <div class="kpi-card kpi-int">
+            <div class="kpi-val kpi-val-sm" id="kpiSourcesEntered">0<span style="font-size:0.9rem">/56</span></div>
+            <div class="kpi-label">Sources Entered</div>
+            <div class="kpi-sub" id="kpiSourcesSub">0% complete</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Charts -->
+      <section class="dash-section">
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="chart-title">Emissions by Scope (tCO₂e)</div>
+            <canvas id="chartScope" height="220"></canvas>
+          </div>
+          <div class="chart-card chart-card-wide">
+            <div class="chart-title">Scope 3 Breakdown by Category (tCO₂e)</div>
+            <canvas id="chartS3" height="220"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scope 3 category table -->
+      <section class="dash-section">
+        <div class="section-hd">
+          <span class="section-hd-icon">🌐</span>
+          <h2>Scope 3 Category Summary</h2>
+          <span class="section-hd-sub">GHG Protocol — 15 categories · Showing covered categories only</span>
+        </div>
+        <div id="s3CategoryTable" class="ranked-table-wrap">
+          <div class="empty-state">Enter emission data in the Scope 3 tab to see category summary.</div>
+        </div>
+      </section>
+
+      <!-- SBTi readiness -->
+      <section class="dash-section interp-section">
+        <div class="section-hd">
+          <span class="section-hd-icon">🎯</span>
+          <h2>Framework Alignment &amp; Interpretation</h2>
+        </div>
+        <div class="interp-grid">
+          <div class="interp-card interp-card-info">
+            <div class="interp-icon">📋</div>
+            <div class="interp-title">How to Use This Tool</div>
+            <div class="interp-body">Enter activity data (fuel volume, kWh, km, spend) in the Scope 1, 2, and 3 tabs. Select the correct emission factor from the guidance provided. The tool calculates tCO₂e for each source and aggregates to the dashboard automatically.</div>
+          </div>
+          <div class="interp-card interp-card-formula">
+            <div class="interp-icon">📐</div>
+            <div class="interp-title">Core Formula</div>
+            <div class="interp-body">
+              <code>tCO₂e = Activity × Emission Factor</code>
+              Activity = volume of fuel, kWh, km, spend, nights, etc.<br/>
+              EF = kgCO₂e per unit (from DEFRA, EPA, IEA, PCAF)<br/>
+              <code>Intensity = Total tCO₂e ÷ Revenue (£m)</code>
+            </div>
+          </div>
+          <div class="interp-card interp-card-action">
+            <div class="interp-icon">✅</div>
+            <div class="interp-title">Interpretation &amp; Next Steps</div>
+            <div class="interp-body" id="interpActionBody">Enter emission data across all three scopes to generate framework alignment recommendations.</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="dash-footer">
+        <p>Scope 1/2/3 Emissions Inventory Worksheet B.3 · Version 2.0 · 56 emission sources</p>
+        <p>GHG Protocol Corporate Standard · ESRS E1 · BRSR Core · ISSB IFRS S2 · SBTi · CDP Climate · TCFD</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── GUIDE TAB ────────────────────────────────────────── -->
+  <div class="tab-panel" id="panel-guide">
+    <div class="panel-scroll guide-panel">
+      <div class="guide-hero">
+        <div class="guide-hero-text">
+          <h1>Guide, Formula &amp; Methodology Reference</h1>
+          <p>Everything you need to understand what this worksheet measures, how to select the right emission factor, how the core formula works, and what the results mean for ESRS E1, BRSR Core, ISSB S2, and SBTi target-setting.</p>
+        </div>
+        <div class="guide-hero-badge">B.3</div>
+      </div>
+
+      <div class="guide-card">
+        <div class="guide-card-title"><span>📌</span> About This Worksheet</div>
+        <p>The B.3 Emissions Inventory Worksheet provides a structured tool for calculating and recording greenhouse gas emissions across all three GHG Protocol scopes — direct (Scope 1), purchased energy (Scope 2), and value chain (Scope 3). It covers 56 distinct emission sources and subcategories across Scope 1 (9 sources), Scope 2 (5 sources), and Scope 3 (42 subcategories across 11 GHG Protocol categories).</p>
+        <p>The worksheet is designed to satisfy the GHG data requirements of all major ESG frameworks simultaneously and provides the baseline emissions data needed for SBTi target-setting, CDP Climate disclosure, ESRS E1 transition plan, and BRSR Core assured KPI reporting.</p>
+        <div class="guide-chips">
+          <span class="gchip">GHG Protocol Corporate Standard</span>
+          <span class="gchip">ESRS E1 (Climate Change)</span>
+          <span class="gchip">ISSB IFRS S2</span>
+          <span class="gchip">BRSR Core (SEBI)</span>
+          <span class="gchip">CDP Climate A-List</span>
+          <span class="gchip">SBTi Corporate Manual</span>
+          <span class="gchip">TCFD Metrics &amp; Targets</span>
+          <span class="gchip">PCAF (Financed Emissions)</span>
+        </div>
+      </div>
+
+      <div class="guide-card formula-guide-card">
+        <div class="guide-card-title"><span>📐</span> The Emissions Formula — Explained</div>
+
+        <div class="formula-display">
+          <div class="formula-main">tCO₂e = Activity Data × Emission Factor (EF)</div>
+          <div class="formula-sub">Scope 1+2+3 Total = Σ(all source tCO₂e)</div>
+          <div class="formula-sub" style="color:#86efac;margin-top:8px">Intensity = Total tCO₂e ÷ Revenue (£m) &nbsp;|&nbsp; Per-capita = Total tCO₂e ÷ Employees</div>
+        </div>
+
+        <div class="formula-explain-grid">
+          <div class="fex-card fex-ad">
+            <div class="fex-label">Activity Data <span class="fex-weight fex-w-ad">What you measure</span></div>
+            <p>The physical quantity of the emission-generating activity — litres of diesel burned, kWh of electricity purchased, passenger-kilometres flown, nights in hotels, tonnes of waste sent to landfill. Activity data must come from primary sources: utility bills, fuel delivery records, travel booking systems, expense systems, or supplier invoices. Estimated data must be flagged and improved over time.</p>
+          </div>
+          <div class="fex-card fex-ef">
+            <div class="fex-label">Emission Factor (EF) <span class="fex-weight fex-w-ef">Converts to CO₂e</span></div>
+            <p>A coefficient that converts the activity unit into kgCO₂e, accounting for all greenhouse gases weighted by their Global Warming Potential (GWP). DEFRA (UK) publishes updated EFs annually. The IEA publishes grid electricity EFs by country. PCAF publishes financed emission factors. Always use the most recent vintage (updated annually for electricity grids). GWP values follow IPCC AR6 (CO₂=1, CH₄=27.9, N₂O=273).</p>
+          </div>
+        </div>
+
+        <!-- Scope definitions -->
+        <div class="scope-defs">
+          <div class="scope-def scope-def-s1">
+            <div class="scope-def-label">🔥 Scope 1 — Direct</div>
+            <p>Emissions from sources owned or controlled by the organisation. Includes fuel combustion in boilers, company vehicles, industrial processes, refrigerant leaks, and fugitive emissions from on-site pipework. <strong>Always reported as location-based (no market-based adjustment).</strong> Required: GHG Protocol, ESRS E1, ISSB S2, BRSR Core, TCFD.</p>
+          </div>
+          <div class="scope-def scope-def-s2">
+            <div class="scope-def-label">⚡ Scope 2 — Purchased Energy</div>
+            <p>Indirect emissions from generation of purchased electricity, heat, steam, and cooling. <strong>GHG Protocol requires dual reporting:</strong> (1) Location-based using national grid average EF, and (2) Market-based using contractual instruments (RECs, GOs, PPAs, supplier-specific EFs). SBTi target validation uses market-based. LEED and RE100 use market-based. CDP requires both.</p>
+          </div>
+          <div class="scope-def scope-def-s3">
+            <div class="scope-def-label">🌐 Scope 3 — Value Chain</div>
+            <p>All other indirect emissions across 15 GHG Protocol categories: 8 upstream (supply chain) and 7 downstream (product use). Typically 70–90% of total corporate footprint. <strong>Begin with a screening exercise</strong> using spend-based estimates for all 15 categories to identify the 2–3 categories representing 80%+ of Scope 3. Prioritise data quality investment there. ESRS E1, BRSR Core, California SB 253, and ISSB S2 all require material Scope 3 disclosure.</p>
+          </div>
+        </div>
+
+        <!-- Data quality hierarchy -->
+        <div class="dq-section">
+          <div class="index-title">📊 Data Quality Hierarchy (GHG Protocol — highest to lowest accuracy)</div>
+          <div class="dq-grid">
+            <div class="dq-item dq-1"><div class="dq-rank">1</div><div><strong>Primary supplier data</strong> — actual metered consumption or supplier-disclosed PCF. Highest accuracy. Required for CSRD Cat 1 primary data.</div></div>
+            <div class="dq-item dq-2"><div class="dq-rank">2</div><div><strong>Activity-based (average data)</strong> — quantity × product-specific EF (e.g. kg of aluminium × 8.24 tCO₂e/t). Good accuracy for physical goods.</div></div>
+            <div class="dq-item dq-3"><div class="dq-rank">3</div><div><strong>Distance-based</strong> — km × modal EF (transport, commuting, business travel). Moderate accuracy. Requires route or distance data.</div></div>
+            <div class="dq-item dq-4"><div class="dq-rank">4</div><div><strong>Spend-based (MRIO)</strong> — £/$ spend × economic EF (Exiobase, USEEIO). Use for screening and categories without quantity data. Lower accuracy, suitable for year 1.</div></div>
+            <div class="dq-item dq-5"><div class="dq-rank">5</div><div><strong>Hybrid methods</strong> — combination of above. Common in practice for Scope 3 Category 1 where some suppliers have PCFs and others do not.</div></div>
+          </div>
+        </div>
+
+        <!-- Key EF sources -->
+        <div class="ef-sources">
+          <div class="index-title">📚 Authoritative Emission Factor Sources</div>
+          <div class="thresh-table">
+            <div class="thresh-row thresh-head"><span>Source</span><span>Applies To</span><span>Update Frequency</span><span>Access</span></div>
+            <div class="thresh-row"><span>DEFRA GHG Conversion Factors</span><span>UK-based activities — fuel, transport, waste, water, hotels</span><span>Annual (June/July)</span><span>gov.uk/government/collections/government-conversion-factors-for-company-reporting</span></div>
+            <div class="thresh-row thresh-alt"><span>IEA Electricity EFs</span><span>Grid electricity by country (location-based Scope 2)</span><span>Annual</span><span>iea.org/data-and-statistics/data-product/emissions-factors-2024</span></div>
+            <div class="thresh-row"><span>US EPA eGRID</span><span>US electricity grid by subregion (Scope 2 US operations)</span><span>Annual</span><span>epa.gov/egrid</span></div>
+            <div class="thresh-row thresh-alt"><span>BEE / CEA (India)</span><span>India electricity grid EF (national and state level)</span><span>Annual</span><span>cea.nic.in — CO₂ Baseline Database</span></div>
+            <div class="thresh-row"><span>Exiobase / USEEIO</span><span>Spend-based Scope 3 Cat 1 MRIO factors</span><span>Periodic</span><span>exiobase.eu | epa.gov/land-research/us-environmentally-extended-input-output-useeio-models</span></div>
+            <div class="thresh-row thresh-alt"><span>PCAF Global Standard</span><span>Financed emissions (Scope 3 Cat 15) for financial institutions</span><span>Annual</span><span>carbonaccountingfinancials.com</span></div>
+            <div class="thresh-row"><span>ECOINVENT Database</span><span>Product lifecycle EFs — detailed LCA data by material and process</span><span>Annual releases</span><span>ecoinvent.org (subscription)</span></div>
+            <div class="thresh-row thresh-alt"><span>WRAP (UK)</span><span>Furniture embodied carbon, food waste, recycling EFs</span><span>Periodic</span><span>wrap.org/resources</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Steps -->
+      <div class="guide-card">
+        <div class="guide-card-title"><span>🔢</span> How to Complete This Inventory — 7 Steps</div>
+        <div class="steps-list">
+          <div class="step-item"><div class="step-num">1</div><div class="step-body"><strong>Set the boundary.</strong> Choose Operational Control, Financial Control, or Equity Share. Fill in Organisation Details on the Dashboard. This determines which legal entities are included.</div></div>
+          <div class="step-item"><div class="step-num">2</div><div class="step-body"><strong>Collect Scope 1 activity data.</strong> Pull metered gas consumption, fuel delivery records, fleet fuel logs, refrigerant service records, and F-Gas log books. Enter in the Scope 1 tab.</div></div>
+          <div class="step-item"><div class="step-num">3</div><div class="step-body"><strong>Collect Scope 2 data — both methods.</strong> Pull electricity invoices (kWh per site). Confirm whether renewable energy certificates, PPAs, or GO certificates are held. Enter location-based and market-based separately in the Scope 2 tab.</div></div>
+          <div class="step-item"><div class="step-num">4</div><div class="step-body"><strong>Screen Scope 3 first.</strong> Run spend-based estimates for all 15 categories using accounts payable data before entering primary data. This identifies where 80%+ of Scope 3 lives and directs your data collection effort.</div></div>
+          <div class="step-item"><div class="step-num">5</div><div class="step-body"><strong>Enter Scope 3 data</strong> in the Scope 3 tab, starting with the highest-priority categories. Use the emission factor guidance in each row to select the correct source and calculation method.</div></div>
+          <div class="step-item"><div class="step-num">6</div><div class="step-body"><strong>Review the Dashboard.</strong> Check the Scope 3 share (target: should reflect operational reality — typically 70–90% for manufacturers), intensity metrics, and the framework alignment panel.</div></div>
+          <div class="step-item"><div class="step-num">7</div><div class="step-body"><strong>Export for disclosure.</strong> Use CSV export for GRI 305, ESRS E1, BRSR Core, and CDP Climate data entry. Use JSON export to save and resume. Print for board reporting.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SCOPE 1 TAB ─────────────────────────────────────── -->
+  <div class="tab-panel" id="panel-S1">
+    <div class="panel-scroll">
+      <div class="scope-header scope-s1">
+        <div class="ph-left">
+          <div class="ph-badge">🔥 Scope 1</div>
+          <div>
+            <div class="ph-title">Direct Emissions — Sources Owned or Controlled</div>
+            <div class="ph-sub">9 sources · Fuel combustion · Refrigerants · Process · Fugitive</div>
+          </div>
+        </div>
+        <div class="ph-stats">
+          <div class="ph-stat"><span id="s1-total-display">—</span><small>tCO₂e Total</small></div>
+          <div class="ph-stat"><span id="s1-entered">0</span><small>Entered</small></div>
+        </div>
+      </div>
+      <div class="scope-note">
+        <strong>Scope 1 reporting note:</strong> All Scope 1 emissions are reported at GWP100 using IPCC AR6 values (CH₄ = 27.9, N₂O = 273). Both gross and biogenic CO₂ must be disclosed separately where biomass combustion occurs. Location-based only — no market-based adjustment applies to Scope 1.
+      </div>
+      <div id="sources-S1" class="sources-stack"></div>
+    </div>
+  </div>
+
+  <!-- ── SCOPE 2 TAB ─────────────────────────────────────── -->
+  <div class="tab-panel" id="panel-S2">
+    <div class="panel-scroll">
+      <div class="scope-header scope-s2">
+        <div class="ph-left">
+          <div class="ph-badge">⚡ Scope 2</div>
+          <div>
+            <div class="ph-title">Purchased Energy — Indirect Emissions</div>
+            <div class="ph-sub">5 sources · Electricity (location &amp; market-based) · Heat · Cooling</div>
+          </div>
+        </div>
+        <div class="ph-stats">
+          <div class="ph-stat"><span id="s2lb-total-display">—</span><small>tCO₂e Location</small></div>
+          <div class="ph-stat"><span id="s2mb-total-display">—</span><small>tCO₂e Market</small></div>
+          <div class="ph-stat"><span id="s2-entered">0</span><small>Entered</small></div>
+        </div>
+      </div>
+      <div class="scope-note">
+        <strong>Dual reporting required:</strong> GHG Protocol mandates both location-based (grid average EF) and market-based (contractual EF) Scope 2 figures. SBTi, RE100, and LEED use market-based. CDP and ESRS E1 require both. Enter the location-based activity (kWh) for all sources. For market-based, enter 0 if you hold valid RECs/GOs covering 100% of consumption.
+      </div>
+      <div id="sources-S2" class="sources-stack"></div>
+    </div>
+  </div>
+
+  <!-- ── SCOPE 3 TAB ─────────────────────────────────────── -->
+  <div class="tab-panel" id="panel-S3">
+    <div class="panel-scroll">
+      <div class="scope-header scope-s3">
+        <div class="ph-left">
+          <div class="ph-badge">🌐 Scope 3</div>
+          <div>
+            <div class="ph-title">Value Chain Emissions — All 15 GHG Protocol Categories</div>
+            <div class="ph-sub">42 subcategories · 11 categories covered · Screen all 15, prioritise top 3</div>
+          </div>
+        </div>
+        <div class="ph-stats">
+          <div class="ph-stat"><span id="s3-total-display">—</span><small>tCO₂e Total</small></div>
+          <div class="ph-stat"><span id="s3-entered">0</span><small>Entered</small></div>
+        </div>
+      </div>
+      <div class="scope-note">
+        <strong>Screening principle:</strong> Before entering primary data, run a spend-based screen of all 15 categories. Typically 1–3 categories represent 80%+ of Scope 3. Prioritise data quality effort there. All 15 categories must be assessed — if a category is not material, document the rationale. The 11 categories here are the most commonly material across industries.
+      </div>
+      <div id="sources-S3" class="sources-stack"></div>
+    </div>
+  </div>
+
+</main>
+
+<input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImport(event)"/>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
