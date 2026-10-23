@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ESG Phase 1 Implementation Toolkit — Chapter 11</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:15px;}
+body{font-family:'Inter',system-ui,sans-serif;background:#0f172a;color:#1e293b;min-height:100vh;overflow-x:hidden;}
+/* BRAND */
+.brand-bar{background:#0f172a;padding:6px 0;border-bottom:2px solid #1d4ed8;text-align:center;}
+.brand-bar-inner{max-width:1440px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:center;gap:14px;}
+.brand-logo{height:44px;width:auto;object-fit:contain;}
+.brand-title{font-size:0.83rem;font-weight:800;color:#fff;} .brand-hl{color:#60a5fa;}
+.brand-author{font-size:0.77rem;font-weight:700;background:linear-gradient(135deg,#b8860b,#ffd700,#daa520,#ffd700,#b8860b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.6));}
+/* HEADER */
+.site-header{background:linear-gradient(135deg,#1e3a8a 0%,#1d4ed8 55%,#4f46e5 100%);padding:0;box-shadow:0 4px 24px rgba(30,58,138,0.4);position:sticky;top:0;z-index:200;}
+.header-inner{max-width:1440px;margin:0 auto;padding:11px 24px;display:flex;align-items:center;justify-content:space-between;gap:14px;}
+.header-brand{display:flex;align-items:center;gap:13px;}
+.header-badge{background:rgba(255,255,255,0.18);border:2px solid rgba(255,255,255,0.4);color:#fff;font-size:0.9rem;font-weight:800;padding:5px 12px;border-radius:8px;letter-spacing:0.06em;flex-shrink:0;}
+.header-title{color:#fff;font-size:1rem;font-weight:700;}
+.header-sub{color:rgba(255,255,255,0.7);font-size:0.7rem;margin-top:2px;}
+.header-actions{display:flex;gap:6px;flex-shrink:0;}
+.btn{padding:6px 12px;border-radius:7px;font-size:0.77rem;font-weight:600;font-family:inherit;cursor:pointer;border:none;transition:all 0.15s;white-space:nowrap;}
+.btn-ghost{background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.28);}
+.btn-ghost:hover{background:rgba(255,255,255,0.22);}
+.btn-primary{background:#fff;color:#1d4ed8;font-weight:700;}
+.btn-primary:hover{background:#eff6ff;}
+/* TAB NAV */
+.tab-nav{background:linear-gradient(135deg,#1e3a8a 0%,#312e81 40%,#4c1d95 80%,#5b21b6 100%);box-shadow:0 4px 16px rgba(0,0,0,0.35);position:sticky;top:55px;z-index:190;}
+.tab-nav-inner{max-width:1440px;margin:0 auto;padding:0 16px;display:flex;gap:1px;overflow-x:auto;}
+.tab-nav-inner::-webkit-scrollbar{height:3px;}
+.tab-btn{display:flex;align-items:center;gap:5px;padding:10px 14px;background:transparent;color:rgba(255,255,255,0.65);border:none;border-bottom:3px solid transparent;font-family:inherit;font-size:0.76rem;font-weight:600;cursor:pointer;transition:all 0.18s;white-space:nowrap;}
+.tab-btn:hover{color:#fff;background:rgba(255,255,255,0.08);}
+.tab-btn.active{color:#fff;border-bottom:3px solid #a5f3fc;background:rgba(255,255,255,0.1);}
+.ti{font-size:0.88rem;} .tl{}
+.tab-btn[data-tab="overview"].active{border-bottom-color:#60a5fa;}
+.tab-btn[data-tab="charter"].active{border-bottom-color:#c4b5fd;}
+.tab-btn[data-tab="materiality"].active{border-bottom-color:#fde68a;}
+.tab-btn[data-tab="scope1"].active{border-bottom-color:#fca5a5;}
+.tab-btn[data-tab="scope2"].active{border-bottom-color:#fde68a;}
+.tab-btn[data-tab="scope3"].active{border-bottom-color:#6ee7b7;}
+.tab-btn[data-tab="data"].active{border-bottom-color:#93c5fd;}
+.tab-btn[data-tab="dashboard"].active{border-bottom-color:#a5f3fc;}
+/* PROGRESS */
+.progress-strip{background:linear-gradient(90deg,#1e3a8a,#4c1d95);padding:5px 24px;}
+.progress-strip-inner{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:12px;}
+.progress-strip span{color:rgba(255,255,255,0.75);font-size:0.72rem;white-space:nowrap;}
+.progress-track{flex:1;background:rgba(255,255,255,0.15);border-radius:99px;height:5px;overflow:hidden;}
+.progress-fill{background:linear-gradient(90deg,#60a5fa,#a78bfa,#34d399);height:100%;border-radius:99px;width:0%;transition:width 0.4s;}
+/* PANELS */
+.tab-panels{position:relative;}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.panel-scroll{max-width:1440px;margin:0 auto;padding:22px 24px 60px;}
+/* OVERVIEW */
+.hero-block{background:linear-gradient(135deg,#1e3a8a,#4c1d95);border-radius:16px;padding:30px 34px;margin-bottom:20px;display:flex;align-items:center;gap:24px;box-shadow:0 4px 20px rgba(0,0,0,0.2);}
+.hero-chapter{font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
+.hero-block h1{font-size:1.4rem;font-weight:800;color:#fff;margin-bottom:10px;}
+.hero-block p{font-size:0.83rem;color:rgba(255,255,255,0.78);line-height:1.65;max-width:680px;}
+.hero-logo{flex-shrink:0;margin-left:auto;}
+.hero-logo-img{height:70px;width:auto;object-fit:contain;opacity:0.85;}
+.overview-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+.ov-card{background:#fff;border-radius:13px;padding:20px;border:1.5px solid #e2e8f0;box-shadow:0 2px 10px rgba(0,0,0,0.07);}
+.ov-icon{font-size:1.5rem;margin-bottom:8px;}
+.ov-title{font-size:0.88rem;font-weight:700;color:#1e293b;margin-bottom:10px;}
+.ov-card p{font-size:0.79rem;color:#475569;line-height:1.65;margin-bottom:8px;}
+.ov-why{border-color:#dbeafe;background:linear-gradient(135deg,#f8faff,#eff6ff);}
+.ov-seq{border-color:#ddd6fe;}
+.ov-frame{border-color:#bbf7d0;}
+.seq-steps{display:flex;flex-direction:column;gap:8px;}
+.seq-step{display:flex;align-items:flex-start;gap:10px;font-size:0.78rem;color:#475569;line-height:1.5;}
+.seq-n{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.72rem;}
+.seq-active .seq-n{background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;}
+.seq-later .seq-n{background:#f1f5f9;color:#94a3b8;}
+.seq-later{opacity:0.6;}
+.frame-chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.fc{border-radius:8px;padding:10px 12px;font-size:0.75rem;font-weight:700;}
+.fc small{font-size:0.67rem;font-weight:400;display:block;margin-top:2px;opacity:0.8;}
+.fc-csrd{background:#fef2f2;color:#dc2626;border:1px solid #fca5a5;}
+.fc-issb{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;}
+.fc-brsr{background:#f0fdf4;color:#16a34a;border:1px solid #86efac;}
+.fc-gri{background:#f5f3ff;color:#6d28d9;border:1px solid #ddd6fe;}
+.fc-sbti{background:#fff7ed;color:#c2410c;border:1px solid #fdba74;}
+.fc-ghg{background:#f0fdf4;color:#065f46;border:1px solid #6ee7b7;}
+.fc-cdp{background:#eff6ff;color:#0369a1;border:1px solid #93c5fd;}
+.fc-tcfd{background:#faf5ff;color:#7c3aed;border:1px solid #e9d5ff;}
+.how-to-card{background:#fff;border-radius:13px;padding:20px 24px;border:1.5px solid #dbeafe;box-shadow:0 2px 10px rgba(0,0,0,0.07);margin-bottom:16px;}
+.htc-title{font-size:0.9rem;font-weight:700;color:#1e293b;margin-bottom:14px;}
+.htc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.htc-step{display:flex;flex-direction:column;gap:6px;}
+.htc-n{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#1d4ed8,#4f46e5);color:#fff;font-weight:800;font-size:0.78rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.htc-step p{font-size:0.76rem;color:#475569;line-height:1.55;}
+/* SECTION HEADERS */
+.section-hd-bar{border-radius:13px;padding:16px 22px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 18px rgba(0,0,0,0.12);}
+.hd-charter{background:linear-gradient(135deg,#312e81,#4f46e5);}
+.hd-materiality{background:linear-gradient(135deg,#78350f,#b45309);}
+.hd-scope1{background:linear-gradient(135deg,#7f1d1d,#b91c1c);}
+.hd-scope2{background:linear-gradient(135deg,#78350f,#d97706);}
+.hd-scope3{background:linear-gradient(135deg,#1e3a8a,#1d4ed8);}
+.hd-data{background:linear-gradient(135deg,#064e3b,#0f766e);}
+.hd-dashboard{background:linear-gradient(135deg,#1e3a8a,#4c1d95);}
+.shb-left{display:flex;align-items:center;gap:14px;}
+.shb-badge{background:rgba(255,255,255,0.2);color:#fff;font-size:0.88rem;font-weight:800;padding:6px 13px;border-radius:9px;white-space:nowrap;}
+.shb-title{color:#fff;font-size:0.95rem;font-weight:700;}
+.shb-sub{color:rgba(255,255,255,0.7);font-size:0.71rem;margin-top:2px;}
+.shb-status{color:#fff;font-size:0.82rem;font-weight:600;background:rgba(255,255,255,0.15);padding:5px 12px;border-radius:20px;white-space:nowrap;}
+/* MANDATE BAR */
+.mandate-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;}
+.mandate-item{border-radius:10px;padding:14px;}
+.mi-label{font-size:0.72rem;font-weight:800;margin-bottom:6px;}
+.mi-text{font-size:0.76rem;color:#475569;line-height:1.5;}
+.mandate-must{background:#fef2f2;border:1.5px solid #fca5a5;} .mandate-must .mi-label{color:#dc2626;}
+.mandate-should{background:#fffbeb;border:1.5px solid #fde68a;} .mandate-should .mi-label{color:#d97706;}
+.mandate-nice{background:#f0fdf4;border:1.5px solid #86efac;} .mandate-nice .mi-label{color:#16a34a;}
+/* FORM CARDS */
+.form-card{background:#fff;border-radius:13px;padding:20px 24px;margin-bottom:14px;border:1.5px solid #e2e8f0;box-shadow:0 2px 10px rgba(0,0,0,0.07);}
+.fc-title{font-size:0.88rem;font-weight:700;color:#1e293b;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.req-tag{font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:20px;background:#fee2e2;color:#dc2626;}
+.req-tag.nice{background:#dcfce7;color:#16a34a;}
+.form-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fg{display:flex;flex-direction:column;gap:4px;}
+.fg-wide{grid-column:1/-1;}
+.fl{font-size:0.69rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;}
+.fi{border:1.5px solid #e2e8f0;border-radius:7px;padding:7px 10px;font-size:0.82rem;font-family:inherit;color:#1e293b;background:#fff;transition:border-color 0.15s;}
+.fi:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,0.1);}
+.fi::placeholder{color:#94a3b8;}
+.fi-ta{border:1.5px solid #e2e8f0;border-radius:7px;padding:8px 10px;font-size:0.79rem;font-family:inherit;color:#1e293b;background:#fff;resize:vertical;min-height:80px;line-height:1.5;width:100%;}
+.fi-ta:focus{outline:none;border-color:#3b82f6;}
+.fi-ta::placeholder{color:#94a3b8;}
+.info-box{background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:9px;padding:12px 15px;font-size:0.79rem;color:#1e40af;line-height:1.6;margin-bottom:14px;}
+.info-green{background:#f0fdf4;border-color:#86efac;color:#166534;}
+/* FRAMEWORK GRID */
+.framework-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.fw-item{background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:9px;padding:11px 13px;cursor:pointer;transition:all 0.15s;}
+.fw-item:hover{border-color:#93c5fd;background:#eff6ff;}
+.fw-item.selected{border-color:#1d4ed8;background:#eff6ff;}
+.fw-item input{margin-right:7px;accent-color:#1d4ed8;}
+.fw-label{font-size:0.8rem;font-weight:700;color:#1e293b;}
+.fw-desc{font-size:0.7rem;color:#64748b;margin-top:3px;line-height:1.4;}
+/* WORLD NOTE */
+.charter-world-note{background:linear-gradient(135deg,#1e3a8a,#312e81);border-radius:13px;padding:20px 24px;margin-top:8px;}
+.wn-title{color:#a5f3fc;font-size:0.84rem;font-weight:700;margin-bottom:14px;}
+.wn-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.wn-item{background:rgba(255,255,255,0.08);border-radius:9px;padding:12px;font-size:0.77rem;color:rgba(255,255,255,0.82);line-height:1.6;}
+.wn-item strong{color:#a5f3fc;}
+/* MATERIALITY */
+.mat-method-bar{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.mm-card{border-radius:10px;padding:16px;}
+.mm-label{font-size:0.8rem;font-weight:700;margin-bottom:7px;}
+.mm-card p{font-size:0.78rem;color:#475569;line-height:1.6;}
+.mm-double{background:#f5f3ff;border:1.5px solid #ddd6fe;} .mm-double .mm-label{color:#7c3aed;}
+.mm-single{background:#eff6ff;border:1.5px solid #bfdbfe;} .mm-single .mm-label{color:#1d4ed8;}
+.mat-table-wrap{overflow-x:auto;margin-bottom:12px;}
+.mat-table{width:100%;border-collapse:collapse;font-size:0.8rem;}
+.mat-table th{background:#f8fafc;color:#64748b;font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:8px 10px;border-bottom:2px solid #e2e8f0;text-align:left;white-space:nowrap;}
+.mat-table td{padding:8px 10px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
+.mat-table tr:hover td{background:#fafcff;}
+.pillar-pill{font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:20px;}
+.pill-E{background:#dcfce7;color:#166534;}
+.pill-S{background:#dbeafe;color:#1d4ed8;}
+.pill-G{background:#fef3c7;color:#92400e;}
+.score-input{width:52px;border:1.5px solid #e2e8f0;border-radius:6px;padding:5px 7px;font-size:0.82rem;font-family:inherit;text-align:center;}
+.score-input:focus{outline:none;border-color:#3b82f6;}
+.mat-score-badge{font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:20px;}
+.add-topic-btn{background:#eff6ff;color:#1d4ed8;border:1.5px solid #bfdbfe;border-radius:7px;padding:7px 16px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s;}
+.add-topic-btn:hover{background:#dbeafe;}
+.mat-chart-wrap{display:flex;gap:20px;align-items:flex-start;margin-bottom:16px;}
+canvas#matCanvas{border-radius:10px;border:1.5px solid #e2e8f0;background:#fff;}
+.mat-legend{display:flex;flex-direction:column;gap:8px;padding-top:8px;}
+.ml-item{display:flex;align-items:center;gap:8px;font-size:0.76rem;color:#475569;}
+.ml-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.mat-priority-list{background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0;}
+.mpl-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:0.8rem;}
+.mpl-item:last-child{border-bottom:none;}
+.failure-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.fail-card{background:#fef9f9;border:1.5px solid #fecaca;border-radius:10px;padding:14px;}
+.fail-icon{font-size:1.3rem;margin-bottom:6px;}
+.fail-title{font-size:0.8rem;font-weight:700;color:#dc2626;margin-bottom:7px;}
+.fail-card p{font-size:0.76rem;color:#475569;line-height:1.55;}
+/* SCOPE SECTIONS */
+.scope-note-bar{background:#fffbeb;border:1.5px solid #fde68a;border-radius:10px;padding:11px 15px;font-size:0.78rem;color:#78350f;line-height:1.6;margin-bottom:14px;}
+.sources-stack{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.src-card{background:#fff;border-radius:12px;border:1.5px solid #e2e8f0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.src-card.has-data{border-left:5px solid #16a34a;}
+.src-top{display:grid;grid-template-columns:60px 1fr auto;}
+.src-id{display:flex;align-items:flex-start;justify-content:center;padding:13px 4px;font-size:0.66rem;font-weight:800;color:#94a3b8;}
+.src-info{padding:11px 13px 9px 0;}
+.src-name{font-size:0.86rem;font-weight:700;color:#1e293b;margin-bottom:3px;}
+.src-desc{font-size:0.74rem;color:#64748b;line-height:1.4;margin-bottom:3px;}
+.src-ef{font-size:0.7rem;color:#7c3aed;background:#f5f3ff;border-radius:5px;padding:2px 7px;display:inline-block;margin-top:3px;}
+.guid-btn{background:none;border:none;padding:0;margin-top:4px;font-size:0.69rem;color:#3b82f6;cursor:pointer;text-decoration:underline;font-family:inherit;}
+.guid-text{font-size:0.71rem;color:#1e40af;background:#eff6ff;border-radius:6px;padding:7px 9px;margin-top:5px;display:none;}
+.guid-text.show{display:block;}
+.src-result{padding:11px 14px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:100px;border-left:1px solid #f1f5f9;background:#fafcff;}
+.res-val{font-size:1.5rem;font-weight:900;color:#e2e8f0;transition:color 0.2s;}
+.res-val.has-val{color:#16a34a;}
+.res-unit{font-size:0.6rem;color:#94a3b8;font-weight:600;}
+.src-inputs{display:grid;grid-template-columns:1fr 1fr 1fr 110px 110px;border-top:1px solid #f1f5f9;background:#f8fafc;}
+.src-inputs.s2-inputs{grid-template-columns:1fr 1fr 1fr 1fr 110px;}
+.inp-col{padding:10px 12px;border-right:1px solid #f1f5f9;}
+.inp-col:last-child{border-right:none;}
+.inp-label{font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#64748b;margin-bottom:5px;}
+.inp-field{width:100%;border:1.5px solid #e2e8f0;border-radius:7px;padding:6px 9px;font-size:0.81rem;font-family:inherit;color:#1e293b;background:#fff;transition:border-color 0.15s;}
+.inp-field:focus{outline:none;border-color:#3b82f6;}
+.inp-field::placeholder{color:#94a3b8;}
+.inp-hint{font-size:0.65rem;color:#94a3b8;margin-top:3px;line-height:1.4;}
+.scope-total-bar{background:linear-gradient(135deg,#1e3a8a,#312e81);border-radius:12px;padding:16px 24px;display:flex;align-items:center;gap:16px;color:#fff;}
+.stb-label{font-size:0.76rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;opacity:0.75;}
+.stb-val{font-size:2rem;font-weight:900;}
+.stb-unit{font-size:0.78rem;opacity:0.7;}
+.stb-data-note{font-size:0.72rem;opacity:0.65;margin-left:auto;}
+.stb-group{display:flex;align-items:center;gap:10px;}
+.stb-div{font-size:1.5rem;opacity:0.3;}
+/* SCOPE 3 */
+.s3-cat{background:#fff;border-radius:12px;border:1.5px solid #e2e8f0;margin-bottom:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.s3-cat-hd{display:flex;align-items:center;gap:12px;padding:12px 18px;background:#f8fafc;border-bottom:1px solid #f1f5f9;cursor:pointer;}
+.s3-cat-hd:hover{background:#eff6ff;}
+.s3-cat-num{font-size:0.7rem;font-weight:800;background:#1e3a8a;color:#fff;padding:2px 8px;border-radius:4px;}
+.s3-cat-name{font-size:0.86rem;font-weight:700;color:#1e293b;flex:1;}
+.s3-cat-badge{font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:20px;}
+.s3-cat-total-disp{font-size:0.9rem;font-weight:800;color:#1d4ed8;min-width:80px;text-align:right;}
+.s3-toggle{color:#94a3b8;transition:transform 0.2s;}
+.s3-toggle.open{transform:rotate(180deg);}
+.s3-cat-body{padding:16px 18px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;}
+.s3-cat-body.collapsed{display:none;}
+/* DATA GOVERNANCE */
+.data-gov-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.dg-card{background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:11px;padding:16px;}
+.dg-num{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#1d4ed8,#4f46e5);color:#fff;font-weight:800;font-size:0.82rem;display:flex;align-items:center;justify-content:center;margin-bottom:8px;}
+.dg-title{font-size:0.86rem;font-weight:700;color:#1e293b;margin-bottom:6px;}
+.dg-card p{font-size:0.77rem;color:#475569;line-height:1.55;}
+.hierarchy-flow{display:flex;flex-direction:column;gap:4px;margin-top:10px;}
+.hf-step{display:flex;gap:10px;align-items:flex-start;font-size:0.76rem;color:#475569;line-height:1.5;background:#eff6ff;border-radius:8px;padding:8px 10px;}
+.hf-n{font-size:0.68rem;font-weight:800;background:#1d4ed8;color:#fff;padding:2px 7px;border-radius:5px;flex-shrink:0;margin-top:1px;}
+.hf-arrow{text-align:center;color:#94a3b8;font-size:1.1rem;line-height:1;}
+/* PLATFORMS */
+.platform-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.plat-card{background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:13px;}
+.plat-name{font-size:0.82rem;font-weight:700;color:#1e293b;margin-bottom:4px;}
+.plat-best{font-size:0.7rem;color:#1d4ed8;margin-bottom:5px;}
+.plat-strength{font-size:0.69rem;color:#64748b;line-height:1.45;}
+/* CHECKLISTS */
+.doc-checklist,.assurance-checklist{display:flex;flex-direction:column;gap:8px;margin-top:10px;}
+.cl-item{display:flex;align-items:flex-start;gap:10px;font-size:0.78rem;color:#475569;line-height:1.5;}
+.cl-item input{margin-top:2px;accent-color:#1d4ed8;flex-shrink:0;}
+.cl-must{font-size:0.65rem;font-weight:700;background:#fee2e2;color:#dc2626;padding:1px 6px;border-radius:20px;flex-shrink:0;}
+/* DASHBOARD */
+.db-kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px;}
+.db-kpi{border-radius:12px;padding:16px 14px;text-align:center;border:2px solid transparent;}
+.dkv{font-size:1.9rem;font-weight:800;margin-bottom:5px;line-height:1;}
+.dkl{font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#64748b;}
+.kpi-s1{background:linear-gradient(135deg,#fef2f2,#fee2e2);border-color:#fca5a5;} .kpi-s1 .dkv{color:#b91c1c;}
+.kpi-s2{background:linear-gradient(135deg,#fffbeb,#fef3c7);border-color:#fde68a;} .kpi-s2 .dkv{color:#d97706;}
+.kpi-s2m{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#86efac;} .kpi-s2m .dkv{color:#16a34a;}
+.kpi-s3{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#93c5fd;} .kpi-s3 .dkv{color:#1d4ed8;}
+.kpi-total{background:linear-gradient(135deg,#1e293b,#334155);border-color:#475569;} .kpi-total .dkv{color:#f1f5f9;} .kpi-total .dkl{color:#94a3b8;}
+.db-section-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+.db-card{background:#fff;border-radius:12px;padding:16px;border:1.5px solid #e2e8f0;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.dbc-title{font-size:0.82rem;font-weight:700;color:#1e293b;margin-bottom:8px;}
+.dbc-status{font-size:0.76rem;font-weight:600;color:#94a3b8;margin-bottom:4px;}
+.dbc-detail{font-size:0.73rem;color:#64748b;}
+.db-charts-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+.db-chart-card{background:#fff;border-radius:12px;padding:18px;border:1.5px solid #e2e8f0;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.dc-title{font-size:0.72rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;}
+.db-next-steps{background:linear-gradient(135deg,#f8faff,#eff6ff);border-radius:12px;padding:18px 22px;border:1.5px solid #bfdbfe;}
+.dns-title{font-size:0.88rem;font-weight:700;color:#1e293b;margin-bottom:10px;}
+.dns-body{font-size:0.8rem;color:#475569;line-height:1.7;}
+/* PRINT */
+@media print{
+  .brand-bar{padding:4px 20px;} .brand-logo{height:36px;}
+  .brand-author{-webkit-text-fill-color:#b8860b!important;filter:none!important;}
+  .site-header{position:relative;} .header-actions,.tab-nav,.progress-strip{display:none!important;}
+  .tab-panel{display:none}
+  .panel-scroll{padding:0;} .guid-text{display:block!important;}
+  body{background:#fff;} .src-card,.s3-cat,.form-card,.db-card{break-inside:avoid;box-shadow:none;}
+  @page{margin:11mm;size:A4 landscape;}
+}
+/* RESPONSIVE */
+@media(max-width:1100px){
+  .overview-grid,.htc-grid,.framework-grid,.data-gov-grid,.platform-grid{grid-template-columns:1fr 1fr;}
+  .failure-grid{grid-template-columns:1fr 1fr;}
+  .src-inputs{grid-template-columns:1fr 1fr 1fr;}
+  .s3-cat-body{grid-template-columns:1fr 1fr;}
+  .db-kpi-row{grid-template-columns:repeat(3,1fr);}
+  .db-section-grid{grid-template-columns:1fr 1fr;}
+  .wn-grid{grid-template-columns:1fr;}
+}
+@media(max-width:760px){
+  .tl{display:none;} .tab-btn{padding:10px 10px;}
+  .panel-scroll{padding:14px 12px 50px;}
+  .mandate-bar,.form-grid-3,.form-grid-2{grid-template-columns:1fr;}
+  .overview-grid,.htc-grid{grid-template-columns:1fr;}
+  .db-charts-row,.db-section-grid{grid-template-columns:1fr;}
+  .mat-chart-wrap{flex-direction:column;}
+  canvas#matCanvas{width:100% !important;}
+}
+
+/* ── MISSING CLASSES ── */
+.empty-state{padding:24px;text-align:center;color:#94a3b8;font-size:0.82rem;font-style:italic;}
+.pill-E{background:#dcfce7;color:#166534;font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:20px;}
+.pill-S{background:#dbeafe;color:#1d4ed8;font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:20px;}
+.pill-G{background:#fef3c7;color:#92400e;font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:20px;}
+.collapsed{display:none!important;}
+
+</style>
+</head>
+<body>
+<!-- ══ BRAND BAR ════════════════════════════════════════════ -->
+<div class="brand-bar">
+  <div class="brand-bar-inner">
+    <img src="data:image/png;base64,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" alt="98s9 Logo" class="brand-logo"/>
+    <div class="brand-text">
+      <div class="brand-title">Experts | Tools | Templates &mdash; From the Book &mdash; <span class="brand-hl">ESG Master Classes</span></div>
+      <div class="brand-author">By Dr. SNK &nbsp;|&nbsp; AI Evangelist &nbsp;|&nbsp; A 98s9 Production</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SITE HEADER ════════════════════════════════════════ -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <span class="header-badge">Ch.11</span>
+      <div>
+        <div class="header-title">Phase 1 ESG Implementation Toolkit</div>
+        <div class="header-sub">Programme Charter · Materiality Assessment · Emissions Baseline (Scope 1/2/3) · Data Infrastructure — GHG Protocol · ESRS · ISSB · BRSR · GRI · SBTi</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" onclick="doReset()">↺ Reset</button>
+      <button class="btn btn-ghost" onclick="doExportJSON()">⬇ Export</button>
+      <button class="btn btn-ghost" onclick="doImportJSON()">⬆ Import</button>
+      <button class="btn btn-ghost" onclick="doExportCSV()">📄 CSV</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨 Print</button>
+    </div>
+  </div>
+</header>
+
+<!-- ══ TAB NAV ════════════════════════════════════════════ -->
+<nav class="tab-nav">
+  <div class="tab-nav-inner">
+    <button class="tab-btn active" data-tab="overview" onclick="showTab('overview')">
+      <span class="ti">📋</span><span class="tl">Overview</span>
+    </button>
+    <button class="tab-btn" data-tab="charter" onclick="showTab('charter')">
+      <span class="ti">🏛</span><span class="tl">Programme Charter</span>
+    </button>
+    <button class="tab-btn" data-tab="materiality" onclick="showTab('materiality')">
+      <span class="ti">⚖️</span><span class="tl">Materiality Assessment</span>
+    </button>
+    <button class="tab-btn" data-tab="scope1" onclick="showTab('scope1')">
+      <span class="ti">🔥</span><span class="tl">Scope 1 Baseline</span>
+    </button>
+    <button class="tab-btn" data-tab="scope2" onclick="showTab('scope2')">
+      <span class="ti">⚡</span><span class="tl">Scope 2 Baseline</span>
+    </button>
+    <button class="tab-btn" data-tab="scope3" onclick="showTab('scope3')">
+      <span class="ti">🌐</span><span class="tl">Scope 3 Baseline</span>
+    </button>
+    <button class="tab-btn" data-tab="data" onclick="showTab('data')">
+      <span class="ti">🗄️</span><span class="tl">Data Infrastructure</span>
+    </button>
+    <button class="tab-btn" data-tab="dashboard" onclick="showTab('dashboard')">
+      <span class="ti">📊</span><span class="tl">Phase 1 Dashboard</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ══ PROGRESS STRIP ═════════════════════════════════════ -->
+<div class="progress-strip">
+  <div class="progress-strip-inner">
+    <span id="progLabel">Phase 1 completion: 0%</span>
+    <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
+    <span id="progPct">0 / 8 sections started</span>
+  </div>
+</div>
+
+<!-- ══ MAIN PANELS ════════════════════════════════════════ -->
+<main class="tab-panels">
+
+<!-- ─────────────────────────────────────────────────────────
+     TAB 1: OVERVIEW
+───────────────────────────────────────────────────────── -->
+<div class="tab-panel active" id="tp-overview">
+  <div class="panel-scroll">
+    <div class="hero-block">
+      <div class="hero-text">
+        <div class="hero-chapter">Chapter 11 · Phase 1 · Baselining, Materiality &amp; Programme Design</div>
+        <h1>ESG Phase 1 Implementation Toolkit</h1>
+        <p>This toolkit operationalises Chapter 11 of ESG Mastery. Phase 1 is the foundation of the entire ESG programme — the work done before any targets are set, before any reports are published, and before any assurance is obtained. The sequence is non-negotiable: materiality first, then baseline, then governance, then reporting.</p>
+      </div>
+      <div class="hero-logo"><img src="data:image/png;base64,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" alt="98s9" class="hero-logo-img"/></div>
+    </div>
+
+    <div class="overview-grid">
+      <div class="ov-card ov-why">
+        <div class="ov-icon">🎯</div>
+        <div class="ov-title">Why Phase 1 Matters</div>
+        <p>The most common and most damaging ESG mistake is starting with the report rather than the assessment. Companies that decide what they want to say, then look for data to support it, produce disclosure that cannot survive regulatory scrutiny or investor due diligence. The correct sequence — required by CSRD, ISSB IFRS S1, BRSR Core, and GRI — is to start with understanding, not communication.</p>
+        <p>A rigorous Phase 1 baseline is the foundation of all future credibility. Ørsted's extraordinary transformation from one of Europe's most carbon-intensive utilities to a global leader in offshore wind rested on a specific, measurable, independently auditable starting point: 16 million tCO₂e in 2006. Without that baseline, none of the subsequent reduction claims would have been verifiable.</p>
+      </div>
+      <div class="ov-card ov-seq">
+        <div class="ov-icon">🔢</div>
+        <div class="ov-title">The Mandated Sequence</div>
+        <div class="seq-steps">
+          <div class="seq-step seq-active"><div class="seq-n">1</div><div><strong>Programme Charter</strong> — Board-approved document defining scope, frameworks, ownership, timeline</div></div>
+          <div class="seq-step seq-active"><div class="seq-n">2</div><div><strong>Materiality Assessment</strong> — Stakeholder-informed prioritisation of which ESG topics to report and manage</div></div>
+          <div class="seq-step seq-active"><div class="seq-n">3</div><div><strong>Emissions Baseline</strong> — Scope 1, 2, and 3 calculation per GHG Protocol in chosen base year</div></div>
+          <div class="seq-step seq-active"><div class="seq-n">4</div><div><strong>Data Infrastructure</strong> — Systems, ownership, governance for auditable ESG data collection</div></div>
+          <div class="seq-step seq-later"><div class="seq-n">5</div><div><strong>Governance Design</strong> — Board committee, management structure, ESG-linked pay (Chapter 12)</div></div>
+          <div class="seq-step seq-later"><div class="seq-n">6</div><div><strong>Target Setting</strong> — SBTi, net-zero, water, biodiversity targets grounded in baseline</div></div>
+          <div class="seq-step seq-later"><div class="seq-n">7</div><div><strong>First Disclosure</strong> — Report against material topics with assured baseline data (Chapter 14)</div></div>
+        </div>
+      </div>
+      <div class="ov-card ov-frame">
+        <div class="ov-icon">📐</div>
+        <div class="ov-title">Framework Obligations This Toolkit Satisfies</div>
+        <div class="frame-chips">
+          <div class="fc fc-csrd">CSRD / ESRS 1<br/><small>Double materiality · Phase 1 obligations</small></div>
+          <div class="fc fc-issb">ISSB IFRS S1<br/><small>Financial materiality · GHG baseline</small></div>
+          <div class="fc fc-brsr">BRSR Core<br/><small>Mandatory 39 KPIs · Third-party assurance</small></div>
+          <div class="fc fc-gri">GRI 3<br/><small>Material topics · Stakeholder engagement</small></div>
+          <div class="fc fc-sbti">SBTi<br/><small>Science-based target baseline requirements</small></div>
+          <div class="fc fc-ghg">GHG Protocol<br/><small>Scope 1/2/3 accounting methodology</small></div>
+          <div class="fc fc-cdp">CDP Climate<br/><small>C1–C14 disclosure sections</small></div>
+          <div class="fc fc-tcfd">TCFD / IFRS S2<br/><small>Four-pillar climate disclosure</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="how-to-card">
+      <div class="htc-title">📌 How to Use This Toolkit</div>
+      <div class="htc-grid">
+        <div class="htc-step"><div class="htc-n">1</div><p>Work through the tabs <strong>in order</strong>: Charter → Materiality → Scope 1 → Scope 2 → Scope 3 → Data Infrastructure. Each builds on the previous.</p></div>
+        <div class="htc-step"><div class="htc-n">2</div><p>Use the <strong>Programme Charter</strong> tab first — it defines the reporting boundary that determines what gets measured in the emissions baseline.</p></div>
+        <div class="htc-step"><div class="htc-n">3</div><p>The <strong>Materiality Assessment</strong> tab generates your topic priority list. Only material topics need a full baseline — but emissions are material for virtually every organisation.</p></div>
+        <div class="htc-step"><div class="htc-n">4</div><p>Complete Scope 1, 2, and 3 baseline tabs using real activity data — not estimates. Flag estimated data clearly; it weakens assurance readiness.</p></div>
+        <div class="htc-step"><div class="htc-n">5</div><p>Use <strong>Export CSV</strong> for your assurance provider data package and <strong>Export JSON</strong> to save and resume. The <strong>Phase 1 Dashboard</strong> (last tab) aggregates all outputs.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────
+     TAB 2: PROGRAMME CHARTER
+───────────────────────────────────────────────────────── -->
+<div class="tab-panel" id="tp-charter">
+  <div class="panel-scroll">
+    <div class="section-hd-bar hd-charter">
+      <div class="shb-left">
+        <div class="shb-badge">🏛 Programme Charter</div>
+        <div><div class="shb-title">Board-Approved ESG Programme Charter</div>
+        <div class="shb-sub">Mandatory first document · Defines scope, frameworks, ownership, and timeline · Required by CSRD, ISSB S1, BRSR Core, GRI 3</div></div>
+      </div>
+      <div class="shb-status" id="charter-status">Not started</div>
+    </div>
+
+    <!-- Mandate vs nice-to-have callout -->
+    <div class="mandate-bar">
+      <div class="mandate-item mandate-must">
+        <div class="mi-label">🔴 MUST HAVE — Regulatory Mandate</div>
+        <div class="mi-text">Reporting boundary · Applicable frameworks · Responsible Person · Board approval date · Base year · Review frequency</div>
+      </div>
+      <div class="mandate-item mandate-should">
+        <div class="mi-label">🟡 SHOULD HAVE — Best Practice</div>
+        <div class="mi-text">Cross-functional working group · Budget allocation · Third-party assurance plan · Stakeholder map · ESG risk register link</div>
+      </div>
+      <div class="mandate-item mandate-nice">
+        <div class="mi-label">🟢 NICE TO HAVE — World-Class</div>
+        <div class="mi-text">Science-based target commitment · Nature/biodiversity scope · TNFD readiness · Just Transition consideration · SDG mapping</div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="fc-title">Part A — Organisation Identity &amp; Scope <span class="req-tag">Mandatory</span></div>
+      <div class="form-grid-3">
+        <div class="fg"><label class="fl">Legal Entity Name (Parent)</label><input type="text" class="fi" id="ch-org" placeholder="e.g. Tata Consultancy Services Ltd"/></div>
+        <div class="fg"><label class="fl">Registered Country / HQ</label><input type="text" class="fi" id="ch-country" placeholder="e.g. India (Mumbai HQ)"/></div>
+        <div class="fg"><label class="fl">Industry / SASB Sector</label><input type="text" class="fi" id="ch-sector" placeholder="e.g. Technology — Software &amp; IT Services"/></div>
+        <div class="fg"><label class="fl">Number of Employees (Total Group)</label><input type="number" class="fi" id="ch-employees" placeholder="e.g. 600,000" min="0"/></div>
+        <div class="fg"><label class="fl">Annual Revenue (£/$/ ₹ million)</label><input type="number" class="fi" id="ch-revenue" placeholder="e.g. 25,700" min="0" step="0.1"/></div>
+        <div class="fg"><label class="fl">Total Office / Facility Floorspace (m²)</label><input type="number" class="fi" id="ch-floor" placeholder="e.g. 500000" min="0"/></div>
+        <div class="fg fg-wide"><label class="fl">Countries / Geographies in Scope</label><input type="text" class="fi" id="ch-geos" placeholder="e.g. India, UK, US, Germany, Singapore — all group entities"/></div>
+        <div class="fg fg-wide"><label class="fl">Entities EXCLUDED from Scope (with reason)</label><input type="text" class="fi" id="ch-excluded" placeholder="e.g. Joint ventures below 20% equity — equity share approach per GHG Protocol"/></div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="fc-title">Part B — Reporting Boundary <span class="req-tag">Mandatory · GHG Protocol decision</span></div>
+      <div class="info-box">
+        <strong>GHG Protocol Boundary Approaches:</strong> <em>Operational Control</em> — report all sources over which the company has the authority to introduce and implement operating policies. Most common for ESG reporting. <em>Financial Control</em> — report all sources where the company has the ability to direct financial and operating policies. <em>Equity Share</em> — report emissions proportional to ownership share. Each approach gives a different boundary — this decision affects every Scope 1 and 2 figure and must be applied consistently.
+      </div>
+      <div class="form-grid-3">
+        <div class="fg"><label class="fl">GHG Boundary Approach</label>
+          <select class="fi" id="ch-boundary">
+            <option value="">Select approach</option>
+            <option>Operational Control (recommended)</option>
+            <option>Financial Control</option>
+            <option>Equity Share</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Value Chain Coverage</label>
+          <select class="fi" id="ch-chain">
+            <option value="">Select coverage</option>
+            <option>Scope 1 &amp; 2 only (Year 1)</option>
+            <option>Scope 1, 2 &amp; material Scope 3 categories</option>
+            <option>Full Scope 1, 2 &amp; all 15 Scope 3 categories</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Base Year for Reporting</label><input type="text" class="fi" id="ch-baseyear" placeholder="e.g. FY 2025–26 (April–March)"/></div>
+        <div class="fg fg-wide"><label class="fl">Rationale for Base Year Selection</label><input type="text" class="fi" id="ch-baseYearRationale" placeholder="e.g. First year of complete metered data; pre-major acquisition baseline"/></div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="fc-title">Part C — Regulatory Frameworks &amp; Voluntary Commitments <span class="req-tag">Mandatory</span></div>
+      <div class="framework-grid" id="fwGrid">
+        <!-- injected by JS -->
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="fc-title">Part D — Ownership, Governance &amp; Timeline <span class="req-tag">Mandatory</span></div>
+      <div class="form-grid-3">
+        <div class="fg"><label class="fl">ESG Programme Lead (Name &amp; Title)</label><input type="text" class="fi" id="ch-lead" placeholder="e.g. Dr. Priya Sharma, Chief Sustainability Officer"/></div>
+        <div class="fg"><label class="fl">Executive Sponsor</label><input type="text" class="fi" id="ch-sponsor" placeholder="e.g. CFO — Rajesh Kumar"/></div>
+        <div class="fg"><label class="fl">Board Committee Responsible</label><input type="text" class="fi" id="ch-board" placeholder="e.g. ESG &amp; Risk Committee / Audit Committee"/></div>
+        <div class="fg"><label class="fl">Charter Approval Date</label><input type="date" class="fi" id="ch-approvalDate"/></div>
+        <div class="fg"><label class="fl">Annual Review Date</label><input type="date" class="fi" id="ch-reviewDate"/></div>
+        <div class="fg"><label class="fl">First Disclosure Target Date</label><input type="date" class="fi" id="ch-disclosureDate"/></div>
+        <div class="fg"><label class="fl">Assurance Engagement Target Date</label><input type="date" class="fi" id="ch-assuranceDate"/></div>
+        <div class="fg"><label class="fl">Assurance Level Target</label>
+          <select class="fi" id="ch-assuranceLevel">
+            <option value="">Select level</option>
+            <option>Limited assurance (ISAE 3000/3410)</option>
+            <option>Reasonable assurance (ISAE 3410)</option>
+            <option>BRSR Core mandatory assurance</option>
+            <option>No external assurance planned</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Estimated Phase 1 Budget</label><input type="text" class="fi" id="ch-budget" placeholder="e.g. £120,000 (staff + consultancy + platform)"/></div>
+      </div>
+      <div class="form-grid-2" style="margin-top:12px">
+        <div class="fg"><label class="fl">Cross-Functional Working Group Members</label>
+          <textarea class="fi-ta" id="ch-wg" placeholder="List functions and named leads: e.g.&#10;Finance — Sarah Jones (GHG data)&#10;HR — David Chen (social KPIs)&#10;Procurement — Aisha Rahman (supply chain ESG)&#10;Facilities / FM — Marco Rossi (energy data)&#10;IT — Priya Nair (data infrastructure)&#10;Legal — James McCarthy (regulatory compliance)"></textarea>
+        </div>
+        <div class="fg"><label class="fl">Phase 1 Key Milestones</label>
+          <textarea class="fi-ta" id="ch-milestones" placeholder="Month 1: Appoint CSO and working group&#10;Month 2: Complete stakeholder mapping&#10;Month 3: Conduct materiality assessment&#10;Month 4: Calculate Scope 1 and 2 baseline&#10;Month 5: Screen Scope 3 categories&#10;Month 6: Select ESG data platform&#10;Month 7: Board sign-off on Charter&#10;Month 8: Engage assurance provider"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="fc-title">Part E — SBTi &amp; Net-Zero Commitment <span class="req-tag nice">Nice to Have — World-Class</span></div>
+      <div class="info-box info-green">
+        <strong>Science Based Targets initiative (SBTi):</strong> The SBTi Corporate Net-Zero Standard requires companies to set near-term targets (2030) aligned to 1.5°C pathways and long-term net-zero targets (2050). Targets must be validated before being made public. SBTi validation requires a GHG Protocol-aligned baseline — this toolkit builds that baseline. Committing to SBTi in the Programme Charter signals ambition to investors and clients before targets are validated.
+      </div>
+      <div class="form-grid-3">
+        <div class="fg"><label class="fl">SBTi Commitment Status</label>
+          <select class="fi" id="ch-sbti">
+            <option value="">Select</option>
+            <option>Committed — submission pending</option>
+            <option>Near-term target submitted — validation pending</option>
+            <option>Near-term target validated</option>
+            <option>Net-Zero target validated</option>
+            <option>Not yet committed</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Net-Zero Target Year</label><input type="text" class="fi" id="ch-nz" placeholder="e.g. 2045 (Scope 1+2) / 2050 (full value chain)"/></div>
+        <div class="fg"><label class="fl">Near-Term Target (2030)</label><input type="text" class="fi" id="ch-nearTerm" placeholder="e.g. 50% absolute reduction in S1+2 by 2030 vs 2025 base"/></div>
+        <div class="fg fg-wide"><label class="fl">Nature / Biodiversity Commitments (TNFD)</label><input type="text" class="fi" id="ch-nature" placeholder="e.g. TNFD LEAP assessment for HQ site · No net deforestation commitment · Water stewardship in water-stressed geographies"/></div>
+        <div class="fg fg-wide"><label class="fl">Just Transition Considerations</label><input type="text" class="fi" id="ch-just" placeholder="e.g. Retraining programme for fossil fuel asset workers · Community engagement plan for affected regions"/></div>
+      </div>
+    </div>
+
+    <div class="charter-world-note">
+      <div class="wn-title">🌍 World-Class Programme Charter — What Global Leaders Include</div>
+      <div class="wn-grid">
+        <div class="wn-item"><strong>Ørsted (Denmark)</strong> — Charter included explicit carbon intensity reduction KPI (tCO₂e/MWh) tied to executive pay from Year 1 of programme. Board ESG Committee had direct line to CEO, not filtered through sustainability function.</div>
+        <div class="wn-item"><strong>Unilever (UK/Netherlands)</strong> — USLP Charter committed to double materiality before CSRD existed. Included social impact targets (livelihoods, health, gender equality) alongside environmental ones — recognising that investor materiality and stakeholder materiality overlap.</div>
+        <div class="wn-item"><strong>Microsoft (US)</strong> — Carbon negative by 2030 Charter included Scope 3 Category 11 (use of sold products) — the emissions from customers running Azure — committing to a target that most companies exclude. Also committed to restoring more water than consumed by 2030.</div>
+        <div class="wn-item"><strong>Mahindra (India)</strong> — BRSR Core Charter included value chain coverage commitment: ESG assessments for suppliers covering 67% of procurement spend, pre-empting regulatory requirement by 2 years. SBTi commitment made public before targets were validated.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────
+     TAB 3: MATERIALITY ASSESSMENT
+───────────────────────────────────────────────────────── -->
+<div class="tab-panel" id="tp-materiality">
+  <div class="panel-scroll">
+    <div class="section-hd-bar hd-materiality">
+      <div class="shb-left">
+        <div class="shb-badge">⚖️ Materiality Assessment</div>
+        <div><div class="shb-title">ESG Topic Prioritisation — Single &amp; Double Materiality</div>
+        <div class="shb-sub">GRI 3 · ESRS 1 · ISSB IFRS S1 · BRSR Core — Board validation required</div></div>
+      </div>
+      <div class="shb-status" id="mat-status">Not started</div>
+    </div>
+
+    <div class="mat-method-bar">
+      <div class="mm-card mm-double">
+        <div class="mm-label">🇪🇺 Double Materiality (CSRD/ESRS/GRI)</div>
+        <p>Assess BOTH: (1) How ESG issues affect the company financially, AND (2) How the company's activities impact people and the environment — regardless of financial feedback. Both dimensions create reporting obligations.</p>
+      </div>
+      <div class="mm-card mm-single">
+        <div class="mm-label">🌍 Single / Financial Materiality (ISSB/BRSR/SEC)</div>
+        <p>Assess: Does this ESG issue affect the company's financial performance, cash flows, access to capital, or value? If a reasonable investor would want to know it, it is material. Environmental or social impacts with no financial feedback are not required to be reported.</p>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="fc-title">Step 1 — Assessment Method &amp; Stakeholder Engagement</div>
+      <div class="form-grid-3">
+        <div class="fg"><label class="fl">Materiality Approach</label>
+          <select class="fi" id="mat-approach" >
+            <option value="">Select</option>
+            <option value="double">Double Materiality (CSRD/ESRS/GRI) — recommended for EU-linked</option>
+            <option value="single">Single / Financial Materiality (ISSB/BRSR/TCFD)</option>
+            <option value="both">Both — run parallel assessments for different frameworks</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Assessment Conducted By</label><input type="text" class="fi" id="mat-conductor" placeholder="e.g. Internal ESG team + EY Consulting facilitation"/></div>
+        <div class="fg"><label class="fl">Assessment Period</label><input type="text" class="fi" id="mat-period" placeholder="e.g. March–June 2026"/></div>
+        <div class="fg fg-wide"><label class="fl">Stakeholder Groups Engaged (list all)</label>
+          <textarea class="fi-ta" style="min-height:70px" id="mat-stakeholders" placeholder="e.g. Institutional investors (n=12 interviews) · Employees survey (n=450, 55% response) · Local communities (3 focus groups) · Customers (n=8 enterprise clients, ESG procurement surveys) · NGOs (2 environmental, 1 social) · Regulators (SEBI ESG advisory) · Suppliers (top 20 by spend, online survey)"></textarea>
+        </div>
+        <div class="fg"><label class="fl">Long List Construction Sources</label>
+          <select class="fi" id="mat-sources">
+            <option value="">Select primary source</option>
+            <option>SASB Materiality Map + GRI Topic Standards + ESRS categories</option>
+            <option>GRI Standards + ESRS + ISSB IFRS S1</option>
+            <option>BRSR Principle topics + GRI</option>
+            <option>Custom + all of the above</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Long List Topic Count</label><input type="number" class="fi" id="mat-longlist" placeholder="e.g. 32 topics" min="1" max="100"/></div>
+        <div class="fg"><label class="fl">Board Validation Date</label><input type="date" class="fi" id="mat-boardDate"/></div>
+        <div class="fg"><label class="fl">Next Reassessment Due</label><input type="date" class="fi" id="mat-nextDate"/></div>
+      </div>
+    </div>
+
+    <!-- Topic scoring table -->
+    <div class="form-card">
+      <div class="fc-title">Step 2 — Topic Assessment &amp; Prioritisation Matrix</div>
+      <div class="info-box">
+        Score each topic 1–5 on both axes. <strong>Financial Significance (X-axis):</strong> Could this topic affect the company's financial performance, access to capital, or value? <strong>Stakeholder / Impact Significance (Y-axis):</strong> How significant is this topic to stakeholders, OR how significant is the company's impact on people/environment through this topic? Topics scoring 4–5 on either axis = Material.
+      </div>
+      <div class="mat-table-wrap" id="matTableWrap"><table class="mat-tbl"><thead><tr><th>Pillar</th><th>ESG Topic</th><th>Financial (1-5)</th><th>Stakeholder/Impact (1-5)</th><th>Score</th><th>Priority</th><th>Include</th></tr></thead><tbody id="matBody"></tbody></table>
+      </div>
+      <button class="add-topic-btn" onclick="addTopic()">+ Add Custom Topic</button>
+    </div>
+
+    <div class="form-card">
+      <div class="fc-title">Step 3 — Materiality Matrix &amp; Priority Topics</div>
+      <div class="mat-chart-wrap">
+        <canvas id="matCanvas" width="480" height="400"></canvas>
+        <div class="mat-legend">
+          <div class="ml-item"><div class="ml-dot" style="background:#dc2626"></div> Priority Material (both axes ≥4)</div>
+          <div class="ml-item"><div class="ml-dot" style="background:#d97706"></div> Material (one axis ≥4)</div>
+          <div class="ml-item"><div class="ml-dot" style="background:#64748b"></div> Monitor / Watch</div>
+        </div>
+      </div>
+      <div id="matPriList" class="mat-priority-list">
+        <div class="empty-state">Score topics above to populate the priority list.</div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="fc-title">Step 4 — Common Failure Modes to Avoid</div>
+      <div class="failure-grid">
+        <div class="fail-card">
+          <div class="fail-icon">⚠️</div>
+          <div class="fail-title">Insufficient Stakeholder Reach</div>
+          <p>Engaging only senior managers and one or two investors misses the perspectives of the people most directly affected. Community voices, supply chain workers, and frontline employees surface issues that management does not see.</p>
+        </div>
+        <div class="fail-card">
+          <div class="fail-icon">⚠️</div>
+          <div class="fail-title">Pre-Determined Outcomes</div>
+          <p>If the materiality assessment confirms exactly what management already believed without surprising anyone, the process was probably not rigorous. A good assessment should produce at least one result that challenges internal assumptions.</p>
+        </div>
+        <div class="fail-card">
+          <div class="fail-icon">⚠️</div>
+          <div class="fail-title">Treating the Matrix as Permanent</div>
+          <p>Dynamic materiality means issues move. GDPR made data privacy financially material within 5 years. Office circular economy moved from facilities management to ESRS E5 obligation. Reassess annually — at minimum review the medium-priority band.</p>
+        </div>
+        <div class="fail-card">
+          <div class="fail-icon">⚠️</div>
+          <div class="fail-title">No Board Validation</div>
+          <p>Under CSRD, ISSB S1, and BRSR Core, board sign-off is a governance requirement, not a formality. The materiality determination commits the company to reporting obligations and risk accountability — the board must own that commitment.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────
+     TAB 4: SCOPE 1 BASELINE
+───────────────────────────────────────────────────────── -->
+<div class="tab-panel" id="tp-scope1">
+  <div class="panel-scroll">
+    <div class="section-hd-bar hd-scope1">
+      <div class="shb-left">
+        <div class="shb-badge">🔥 Scope 1 Baseline</div>
+        <div><div class="shb-title">Direct Emissions — Base Year Calculation</div>
+        <div class="shb-sub">GHG Protocol Corporate Standard · DEFRA / EPA / BEE emission factors · tCO₂e = Activity × EF</div></div>
+      </div>
+      <div class="shb-status"><span id="s1Total">—</span> tCO₂e</div>
+    </div>
+    <div class="scope-note-bar">
+      <strong>Methodology:</strong> tCO₂e = Activity Data × Emission Factor. GWP100 values: IPCC AR6 (CO₂=1, CH₄=27.9, N₂O=273). Use DEFRA (UK), EPA eGRID (US), or BEE/CEA (India) emission factors. All Scope 1 is location-based — no market-based adjustment applies. Record data quality: <em>Measured</em> (metered) / <em>Calculated</em> (engineering estimate) / <em>Estimated</em> (spend-based proxy).
+    </div>
+    <div class="sources-stack" id="s1Stack"><!-- injected by JS --></div>
+    <div class="scope-total-bar">
+      <div class="stb-label">Scope 1 Total</div>
+      <div class="stb-val" id="s1TotalBar">—</div>
+      <div class="stb-unit">tCO₂e</div>
+      <div class="stb-data-note">Data quality: <span id="s1-dq">—</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────
+     TAB 5: SCOPE 2 BASELINE
+───────────────────────────────────────────────────────── -->
+<div class="tab-panel" id="tp-scope2">
+  <div class="panel-scroll">
+    <div class="section-hd-bar hd-scope2">
+      <div class="shb-left">
+        <div class="shb-badge">⚡ Scope 2 Baseline</div>
+        <div><div class="shb-title">Purchased Energy Emissions — Dual Reporting (Location &amp; Market-Based)</div>
+        <div class="shb-sub">GHG Protocol Scope 2 Guidance (2015) · ESRS E1 · CDP C8 · SBTi uses market-based</div></div>
+      </div>
+      <div class="shb-status"><span id="s2Total">—</span> tCO₂e (LB)</div>
+    </div>
+    <div class="scope-note-bar">
+      <strong>Dual reporting is mandatory under GHG Protocol:</strong> (1) <em>Location-based</em> — uses national/regional grid average emission factor (DEFRA, IEA, CEA). (2) <em>Market-based</em> — uses contractual EF from RECs, GOs, PPAs, or supplier-specific data. Zero if 100% renewable verified. SBTi target validation uses market-based. CDP and ESRS E1 require both. Never use grid average as market-based.
+    </div>
+    <div class="sources-stack" id="s2Stack"><!-- injected by JS --></div>
+    <div class="scope-total-bar">
+      <div class="stb-group">
+        <div class="stb-label">Location-Based Total</div>
+        <div class="stb-val" id="s2LBBar">—</div>
+        <div class="stb-unit">tCO₂e</div>
+      </div>
+      <div class="stb-div">|</div>
+      <div class="stb-group">
+        <div class="stb-label">Market-Based Total</div>
+        <div class="stb-val" id="s2MBBar">—</div>
+        <div class="stb-unit">tCO₂e</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────
+     TAB 6: SCOPE 3 BASELINE
+───────────────────────────────────────────────────────── -->
+<div class="tab-panel" id="tp-scope3">
+  <div class="panel-scroll">
+    <div class="section-hd-bar hd-scope3">
+      <div class="shb-left">
+        <div class="shb-badge">🌐 Scope 3 Baseline</div>
+        <div><div class="shb-title">Value Chain Emissions — Screening &amp; Baseline</div>
+        <div class="shb-sub">GHG Protocol Corporate Value Chain Standard · 15 categories · Screen first, then quantify material categories</div></div>
+      </div>
+      <div class="shb-status"><span id="s3Total">—</span> tCO₂e</div>
+    </div>
+    <div class="scope-note-bar">
+      <strong>Screening principle (Chapter 11):</strong> Run spend-based estimates across all 15 categories before collecting primary data. Typically 1–3 categories represent 80%+ of Scope 3. Prioritise data quality investment there. ESRS E1 requires all 15 to be assessed — if not material, document the rationale. California SB 253 requires all three scopes including all material S3.
+    </div>
+    <div id="s3Cats"><!-- injected by JS --></div>
+    <div class="scope-total-bar">
+      <div class="stb-label">Scope 3 Total (assessed categories)</div>
+      <div class="stb-val" id="s3TotalBar">—</div>
+      <div class="stb-unit">tCO₂e</div>
+      <div class="stb-data-note">Categories assessed: <span id="s3Count">0</span> / 15</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────
+     TAB 7: DATA INFRASTRUCTURE
+───────────────────────────────────────────────────────── -->
+<div class="tab-panel" id="tp-data">
+  <div class="panel-scroll">
+    <div class="section-hd-bar hd-data">
+      <div class="shb-left">
+        <div class="shb-badge">🗄️ Data Infrastructure</div>
+        <div><div class="shb-title">ESG Data Systems, Ownership &amp; Governance for Phase 1</div>
+        <div class="shb-sub">Chapter 14 cross-reference · ISO 45001 · ISAE 3000/3410 assurance readiness · Platform selection criteria</div></div>
+      </div>
+      <div class="shb-status" id="data-status">Not started</div>
+    </div>
+
+    <div class="form-card">
+      <div class="fc-title">Data Governance — Four Required Components <span class="req-tag">Mandatory for Assured Disclosure</span></div>
+      <div class="info-box">
+        ESRS, BRSR Core, and ISSB-aligned frameworks all require assured ESG disclosure. Assurance providers (Big 4 and specialist firms) review: data ownership records, collection methodology documentation, review and approval hierarchy, and system audit trails. Building this infrastructure in Phase 1 costs a fraction of retrofitting it when an assurance provider flags data quality gaps.
+      </div>
+      <div class="data-gov-grid">
+        <div class="dg-card">
+          <div class="dg-num">1</div>
+          <div class="dg-title">Data Ownership</div>
+          <p>Every ESG data point must have a named owner — a specific individual responsible for accuracy, timeliness, and completeness.</p>
+          <div class="form-grid-2" style="margin-top:10px">
+            <div class="fg"><label class="fl">Scope 1 Data Owner</label><input type="text" class="fi" id="d-s1owner" placeholder="e.g. Energy &amp; FM Manager — Sarah Jones"/></div>
+            <div class="fg"><label class="fl">Scope 2 Data Owner</label><input type="text" class="fi" id="d-s2owner" placeholder="e.g. Energy Procurement Lead"/></div>
+            <div class="fg"><label class="fl">Scope 3 Data Owner</label><input type="text" class="fi" id="d-s3owner" placeholder="e.g. ESG Programme Lead + Procurement"/></div>
+            <div class="fg"><label class="fl">Social KPI Data Owner</label><input type="text" class="fi" id="d-socowner" placeholder="e.g. HR Analytics — David Chen"/></div>
+            <div class="fg"><label class="fl">Governance KPI Data Owner</label><input type="text" class="fi" id="d-govowner" placeholder="e.g. Company Secretary / Legal"/></div>
+            <div class="fg"><label class="fl">Supply Chain ESG Data Owner</label><input type="text" class="fi" id="d-scowner" placeholder="e.g. Procurement ESG Lead — Aisha Rahman"/></div>
+          </div>
+        </div>
+        <div class="dg-card">
+          <div class="dg-num">2</div>
+          <div class="dg-title">Data Collection Calendar</div>
+          <p>ESG data must be collected on a scheduled basis with the same discipline as financial close.</p>
+          <div class="fg" style="margin-top:10px"><label class="fl">Monthly Data Points</label>
+            <textarea class="fi-ta" id="d-monthly" placeholder="e.g. Natural gas consumption (metered) · Electricity kWh (smart meter) · Water consumption · Waste weights from contractor"></textarea>
+          </div>
+          <div class="fg" style="margin-top:8px"><label class="fl">Quarterly Data Points</label>
+            <textarea class="fi-ta" id="d-quarterly" placeholder="e.g. Business travel (expense system export) · Fleet fuel (fuel card data) · Supplier ESG assessment completions"></textarea>
+          </div>
+          <div class="fg" style="margin-top:8px"><label class="fl">Annual Data Points</label>
+            <textarea class="fi-ta" id="d-annual" placeholder="e.g. Employee commuting survey · Full Scope 3 calculation · Board diversity data · Gender pay gap calculation"></textarea>
+          </div>
+        </div>
+        <div class="dg-card">
+          <div class="dg-num">3</div>
+          <div class="dg-title">Review &amp; Approval Hierarchy</div>
+          <p>Three-level review ensures data quality before assurance engagement.</p>
+          <div class="hierarchy-flow">
+            <div class="hf-step"><div class="hf-n">L1</div><div><strong>Data Owner validates at source</strong> — checks for completeness, reasonableness, and consistency with prior periods. Flags anomalies.</div></div>
+            <div class="hf-arrow">↓</div>
+            <div class="hf-step"><div class="hf-n">L2</div><div><strong>Function ESG Data Coordinator reviews</strong> — cross-checks against utility bills, invoices, travel booking system. Signs off on function submission.</div></div>
+            <div class="hf-arrow">↓</div>
+            <div class="hf-step"><div class="hf-n">L3</div><div><strong>ESG Programme Lead approves</strong> — consolidates all functions, conducts cross-pillar reasonableness check, submits to assurance engagement.</div></div>
+          </div>
+          <div class="fg" style="margin-top:10px"><label class="fl">L1 Review Deadline (internal)</label><input type="text" class="fi" id="d-l1dead" placeholder="e.g. 15 working days after year-end"/></div>
+          <div class="fg" style="margin-top:8px"><label class="fl">L3 Final Approval Deadline</label><input type="text" class="fi" id="d-l3dead" placeholder="e.g. 45 working days after year-end"/></div>
+        </div>
+        <div class="dg-card">
+          <div class="dg-num">4</div>
+          <div class="dg-title">Documentation Standard</div>
+          <p>Every material data point requires methodology documentation for assurance review.</p>
+          <div class="doc-checklist" id="docChecklist"><!-- injected by JS --></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="fc-title">Platform Selection — ESG Data &amp; Carbon Accounting Systems</div>
+      <div class="platform-grid" id="platGrid"><!-- injected by JS --></div>
+      <div class="form-grid-2" style="margin-top:16px">
+        <div class="fg"><label class="fl">Selected / Shortlisted Platform</label><input type="text" class="fi" id="d-platform" placeholder="e.g. Watershed — shortlisted; Persefoni — evaluated"/></div>
+        <div class="fg"><label class="fl">Go-Live Target Date</label><input type="date" class="fi" id="d-golive"/></div>
+        <div class="fg fg-wide"><label class="fl">Integration Requirements</label><input type="text" class="fi" id="d-integrate" placeholder="e.g. SAP ERP (energy data) · Workday (HR/social) · SAP Ariba (procurement/S3 Cat1) · Concur (travel S3 Cat6)"/></div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="fc-title">Assurance Readiness Checklist</div>
+      <div class="assurance-checklist" id="assurList"><!-- injected by JS --></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────
+     TAB 8: PHASE 1 DASHBOARD
+───────────────────────────────────────────────────────── -->
+<div class="tab-panel" id="tp-dashboard">
+  <div class="panel-scroll">
+    <div class="section-hd-bar hd-dashboard">
+      <div class="shb-left">
+        <div class="shb-badge">📊 Phase 1 Dashboard</div>
+        <div><div class="shb-title">Programme Completion &amp; Emissions Summary</div>
+        <div class="shb-sub">Aggregated from all Phase 1 sections · Live update</div></div>
+      </div>
+    </div>
+    <div class="db-kpi-row">
+      <div class="db-kpi kpi-s1"><div class="dkv" id="db-s1">—</div><div class="dkl">Scope 1 tCO₂e</div></div>
+      <div class="db-kpi kpi-s2"><div class="dkv" id="db-s2lb">—</div><div class="dkl">Scope 2 LB tCO₂e</div></div>
+      <div class="db-kpi kpi-s2m"><div class="dkv" id="db-s2mb">—</div><div class="dkl">Scope 2 MB tCO₂e</div></div>
+      <div class="db-kpi kpi-s3"><div class="dkv" id="db-s3">—</div><div class="dkl">Scope 3 tCO₂e</div></div>
+      <div class="db-kpi kpi-total"><div class="dkv" id="db-tot">—</div><div class="dkl">Total tCO₂e</div></div>
+    </div>
+    <div class="db-section-grid">
+      <div class="db-card"><div class="dbc-title">🏛 Programme Charter</div><div class="dbc-status" id="db-ch-s">Not started</div><div class="dbc-detail" id="db-ch-d">—</div></div>
+      <div class="db-card"><div class="dbc-title">⚖️ Materiality Assessment</div><div class="dbc-status" id="db-mat-s">Not started</div><div class="dbc-detail" id="db-mat-d">—</div></div>
+      <div class="db-card"><div class="dbc-title">🔥 Scope 1 Baseline</div><div class="dbc-status" id="db-s1-s">Not started</div><div class="dbc-detail" id="db-s1-d">—</div></div>
+      <div class="db-card"><div class="dbc-title">⚡ Scope 2 Baseline</div><div class="dbc-status" id="db-s2-s">Not started</div><div class="dbc-detail" id="db-s2-d">—</div></div>
+      <div class="db-card"><div class="dbc-title">🌐 Scope 3 Baseline</div><div class="dbc-status" id="db-s3-s">Not started</div><div class="dbc-detail" id="db-s3-d">—</div></div>
+      <div class="db-card"><div class="dbc-title">🗄️ Data Infrastructure</div><div class="dbc-status" id="db-data-s">Not started</div><div class="dbc-detail" id="db-data-d">—</div></div>
+    </div>
+    <div class="db-charts-row">
+      <div class="db-chart-card"><div class="dc-title">Emissions by Scope (tCO₂e)</div><canvas id="dbScope" height="240"></canvas></div>
+      <div class="db-chart-card"><div class="dc-title">Phase 1 Section Completion (%)</div><canvas id="dbCompl" height="240"></canvas></div>
+    </div>
+    <div class="db-next-steps">
+      <div class="dns-title">📋 Phase 1 Completion &amp; Next Steps</div>
+      <div id="dbNext" class="dns-body">Complete the Programme Charter, Materiality Assessment, and Emissions Baseline sections to generate Phase 1 completion recommendations.</div>
+    </div>
+  </div>
+</div>
+
+</main>
+<input type="file" id="importFile" accept=".json" style="display:none"/>
+<script>
+var FRAMEWORKS = [
+  {id:'csrd', label:'CSRD / ESRS', desc:'EU mandatory — double materiality, all ESRS topical standards', checked:true},
+  {id:'issb', label:'ISSB IFRS S1/S2', desc:'Global investor-focused — financial materiality, 30+ jurisdictions'},
+  {id:'brsr', label:'BRSR Core (SEBI)', desc:'India mandatory for top 150 listed companies — 39 assured KPIs'},
+  {id:'gri',  label:'GRI Standards', desc:'Voluntary global stakeholder-focused — widest topic coverage'},
+  {id:'sbti', label:'SBTi Net-Zero', desc:'Science-based emissions targets — near-term 2030, net-zero 2050'},
+  {id:'cdp',  label:'CDP Climate / Water', desc:'Investor-driven — A-List scoring, feeds investor ESG ratings'},
+  {id:'tcfd', label:'TCFD / IFRS S2', desc:'Four-pillar climate risk — mandatory in many markets'},
+  {id:'tnfd', label:'TNFD', desc:'Nature and biodiversity risk — ISSB nature standard expected 2027'},
+  {id:'sasb', label:'SASB Industry Standards', desc:'Industry-specific material KPIs — 77 sectors'},
+  {id:'sgx',  label:'SGX (Singapore)', desc:'ISSB-aligned mandatory climate disclosure from 2023–2025'},
+  {id:'asrs', label:'ASRS (Australia)', desc:'ISSB-aligned mandatory from FY2025 — Group 1 large companies'},
+  {id:'sb253',label:'California SB 253', desc:'Scope 1/2/3 for $1B+ revenue companies in California'}
+];
+
+var MAT_TOPICS = [
+  {id:'e01',p:'E',t:'GHG Emissions — Scope 1 & 2',fin:5,imp:4},
+  {id:'e02',p:'E',t:'GHG Emissions — Scope 3 Value Chain',fin:4,imp:5},
+  {id:'e03',p:'E',t:'Climate Physical Risk',fin:4,imp:3},
+  {id:'e04',p:'E',t:'Climate Transition Risk',fin:4,imp:3},
+  {id:'e05',p:'E',t:'Energy Efficiency & Renewables',fin:4,imp:4},
+  {id:'e06',p:'E',t:'Water Use & Scarcity',fin:3,imp:4},
+  {id:'e07',p:'E',t:'Biodiversity & Ecosystems (TNFD)',fin:2,imp:4},
+  {id:'e08',p:'E',t:'Waste & Circular Economy',fin:3,imp:4},
+  {id:'e09',p:'E',t:'Air, Water & Soil Pollution',fin:3,imp:4},
+  {id:'e10',p:'E',t:'Sustainable Procurement & Materials',fin:3,imp:3},
+  {id:'s01',p:'S',t:'Employee Health & Safety',fin:5,imp:5},
+  {id:'s02',p:'S',t:'DEI — Diversity, Equity & Inclusion',fin:4,imp:4},
+  {id:'s03',p:'S',t:'Gender Pay Equity',fin:4,imp:4},
+  {id:'s04',p:'S',t:'Employee Wellbeing & Mental Health',fin:4,imp:4},
+  {id:'s05',p:'S',t:'Living Wage & Fair Pay',fin:3,imp:5},
+  {id:'s06',p:'S',t:'Supply Chain Labour Rights (HRDD)',fin:4,imp:5},
+  {id:'s07',p:'S',t:'Data Privacy & Cybersecurity',fin:5,imp:4},
+  {id:'s08',p:'S',t:'Community Impact & Social Value',fin:3,imp:4},
+  {id:'s09',p:'S',t:'Customer Wellbeing & Product Safety',fin:4,imp:4},
+  {id:'s10',p:'S',t:'Responsible AI & Digital Ethics',fin:4,imp:3},
+  {id:'g01',p:'G',t:'Board Composition & Independence',fin:5,imp:4},
+  {id:'g02',p:'G',t:'ESG-Linked Executive Compensation',fin:4,imp:4},
+  {id:'g03',p:'G',t:'Anti-Corruption & Business Ethics',fin:5,imp:5},
+  {id:'g04',p:'G',t:'Whistleblower Protection',fin:4,imp:4},
+  {id:'g05',p:'G',t:'Tax Transparency',fin:4,imp:3},
+  {id:'g06',p:'G',t:'Lobbying & Political Influence',fin:3,imp:3},
+  {id:'g07',p:'G',t:'Supply Chain ESG Governance',fin:4,imp:4},
+  {id:'g08',p:'G',t:'ESG Reporting Quality & Assurance',fin:5,imp:4}
+];
+
+var S1_SOURCES = [
+  {id:'s1a',name:'Natural Gas — Stationary Combustion',desc:'Boilers, furnaces, heaters, backup generators.',ef:'0.18254 kgCO\u2082e/kWh (DEFRA 2024)',unit:'kWh or m\u00B3',hint:'Convert m\u00B3 \u00D7 11.1 kWh/m\u00B3 (UK calorific value). Pull from monthly gas bills.'},
+  {id:'s1b',name:'Diesel / HFO — Stationary Combustion',desc:'Diesel boilers, standby generators, oil-fired heating, heavy fuel oil.',ef:'Diesel: 2.51839 kgCO\u2082e/L \u00B7 HFO: 3.17938 kgCO\u2082e/L (DEFRA 2024)',unit:'Litres',hint:'Fuel delivery dockets or tank gauge readings. Generator run hours \u00D7 fuel consumption rate.'},
+  {id:'s1c',name:'LPG — Stationary & Mobile Combustion',desc:'LPG heaters, kitchen equipment, process heating, forklift LPG.',ef:'1.49431 kgCO\u2082e/kg \u00B7 1.09503 kgCO\u2082e/L (DEFRA 2024)',unit:'kg or Litres',hint:'LPG cylinder / bulk delivery records from supplier.'},
+  {id:'s1d',name:'Company Fleet — Petrol / Diesel Vehicles',desc:'Cars, vans, trucks owned or leased. Use actual litres not km where possible.',ef:'Petrol: 2.31356 kgCO\u2082e/L \u00B7 Diesel: 2.55953 kgCO\u2082e/L (DEFRA 2024)',unit:'Litres',hint:'Fleet fuel cards or telematics system. Litres \u00D7 EF is more accurate than km method.'},
+  {id:'s1e',name:'Refrigerant Leaks — HFCs / F-Gas',desc:'Leaks from HVAC chillers, cold stores, server room cooling. Very high GWP.',ef:'R-410A: 2088 \u00B7 R-32: 675 \u00B7 R-134a: 1430 kgCO\u2082e/kg (IPCC AR6)',unit:'kg per refrigerant type',hint:'F-Gas log books — legally required. Kg charged at each service visit = leak estimate.'},
+  {id:'s1f',name:'Process Emissions — Industrial / Wastewater',desc:'Non-combustion: cement calcination, smelting, fermentation, on-site wastewater treatment.',ef:'Process-specific — IPCC 2006 sector protocols \u00B7 cement: 0.507 tCO\u2082/t clinker',unit:'Tonnes product',hint:'Engineering calculation required. IPCC default factors or sector protocol.'},
+  {id:'s1g',name:'Fugitive Emissions — Methane Leaks',desc:'CH\u2084 from gas pipework, valves, fugitive releases. GWP100 = 27.9 (IPCC AR6).',ef:'CH\u2084 GWP100 = 27.9 \u00B7 1 tonne CH\u2084 = 27.9 tCO\u2082e',unit:'kg CH\u2084',hint:'LDAR programme data or engineering estimate. High priority for oil & gas and utilities.'}
+];
+
+var S2_SOURCES = [
+  {id:'s2a',name:'Purchased Electricity — Location-Based',desc:'Grid electricity using national/regional average EF. Mandatory dual-reporting baseline.',efRef:'UK: 0.20705 \u00B7 India: 0.71 \u00B7 US avg: 0.38621 \u00B7 Singapore: 0.4168 kgCO\u2082e/kWh',unit:'kWh',hint:'Electricity invoices or smart meter data. Report per site where possible.'},
+  {id:'s2b',name:'Purchased Electricity — Market-Based',desc:'Contractual EF from RECs, GOs, PPAs. May be zero with 100% verified renewables.',efRef:'Contractual EF (0 if I-RECs/GOs cover 100%) \u00B7 residual mix if no instrument',unit:'kWh',hint:'Never use grid average as market-based. Residual mix EF is typically higher than grid average.'},
+  {id:'s2c',name:'On-Site Renewable Generation',desc:'Solar PV or wind self-generated. Reduces market-based Scope 2.',efRef:'Market-based = 0 \u00B7 Location-based: subtract from grid consumption',unit:'kWh generated',hint:'Inverter metering data. Exported units do NOT reduce Scope 2 — only on-site consumed units.'},
+  {id:'s2d',name:'Purchased Heat / Steam',desc:'Heat from external CHP or district heat network.',efRef:'Supplier-provided EF \u00B7 DEFRA proxy: 0.18254 kgCO\u2082e/kWh',unit:'kWh or GJ',hint:'Request heat EF from supplier — some district heat is low-carbon (waste-to-energy, geothermal).'},
+  {id:'s2e',name:'Purchased Cooling (District Chilled Water)',desc:'Chilled water from external district cooling — data centres, dense urban offices.',efRef:'Supplier EF \u00B7 estimate: COP 3\u20135 \u2192 0.2\u20130.33 kWh elec per kWh cooling \u00D7 grid EF',unit:'kWh or GJ',hint:'Request EF from district cooling operator. Common in Singapore, Gulf states, US Sun Belt.'}
+];
+
+var S3_CATS = [
+  {n:1, name:'Purchased Goods & Services',pri:'HIGH',method:'Spend-based (MRIO) or supplier primary data',ef:'Exiobase / USEEIO / supplier PCF'},
+  {n:2, name:'Capital Goods',pri:'MEDIUM',method:'Supplier EPD or spend-based',ef:'Supplier EPDs / DEFRA capital goods EFs'},
+  {n:3, name:'Fuel & Energy-Related Activities',pri:'MEDIUM',method:'GHG Protocol supplementary S3 factors',ef:'DEFRA upstream EFs / T&D loss factors'},
+  {n:4, name:'Upstream Transportation',pri:'MEDIUM',method:'Distance-based (tonne-km \u00D7 modal EF)',ef:'DEFRA freight EFs by mode'},
+  {n:5, name:'Waste Generated in Operations',pri:'LOW',method:'Waste type \u00D7 disposal route EF',ef:'DEFRA waste EFs'},
+  {n:6, name:'Business Travel',pri:'HIGH',method:'Distance-based (p-km \u00D7 class/mode EF)',ef:'DEFRA 2024 business travel (with RFI for flights)'},
+  {n:7, name:'Employee Commuting',pri:'MEDIUM',method:'Annual commuting survey \u00D7 modal EF',ef:'DEFRA commuting EFs / GHG Protocol WFH guidance'},
+  {n:8, name:'Upstream Leased Assets',pri:'MEDIUM',method:'Lessor utility data or EUI benchmark',ef:'Landlord data / CIBSE benchmarks / cloud dashboards'},
+  {n:9, name:'Downstream Transportation',pri:'MEDIUM',method:'Distance-based (tonne-km \u00D7 modal EF)',ef:'DEFRA freight EFs by mode'},
+  {n:10,name:'Processing of Sold Products',pri:'LOW',method:'Intermediate product processing EFs',ef:'Sector-specific data'},
+  {n:11,name:'Use of Sold Products',pri:'HIGH',method:'Product energy use \u00D7 units \u00D7 lifetime \u00D7 grid EF',ef:'Product specifications / IEA grid EFs'},
+  {n:12,name:'End-of-Life Treatment',pri:'LOW',method:'Material composition \u00D7 disposal scenario EF',ef:'DEFRA waste EFs / recycling rates'},
+  {n:13,name:'Downstream Leased Assets',pri:'MEDIUM',method:'Lessee utility data or EUI benchmark',ef:'Tenant energy data / GRESB benchmarks'},
+  {n:14,name:'Franchises',pri:'HIGH',method:'Franchisee energy/GHG data or industry average',ef:'Franchisee disclosures'},
+  {n:15,name:'Investments (Financed Emissions)',pri:'CRITICAL',method:'PCAF Global GHG Accounting Standard',ef:'PCAF / investee disclosures / MSCI Bloomberg'}
+];
+
+var PLATFORMS = [
+  {name:'Persefoni',best:'Financial institutions — PCAF financed emissions, ISSB S2',str:'Category 15 (financed emissions), bank/insurer specialist'},
+  {name:'Watershed',best:'Technology, consumer goods — Scope 3 Cat 1 supplier data',str:'Supplier engagement portal, carbon removal marketplace'},
+  {name:'Greenly',best:'SMEs — automated from bank/accounting data',str:'Lowest barrier to entry, connects to QuickBooks, Xero, Stripe'},
+  {name:'Sweep',best:'Consumer brands, FMCG — ESRS compliance focus',str:'ESRS E1 template built-in, European regulator alignment'},
+  {name:'Microsoft Cloud for Sustainability',best:'Microsoft 365/Azure organisations',str:'Native integration with M365, Teams, Azure for carbon accounting'},
+  {name:'Salesforce Net Zero Cloud',best:'Salesforce-heavy enterprises',str:'Embedded in Salesforce ecosystem, supply chain engagement'},
+  {name:'IBM Envizi',best:'Large enterprises — complex multi-site, multi-country',str:'Enterprise-grade, strong utility bill processing, BRSR template'},
+  {name:'Datamaran',best:'Dynamic materiality — regulatory monitoring + AI',str:'Regulatory change monitoring, peer benchmarking, AI materiality'}
+];
+
+var ASSUR_ITEMS = [
+  {id:'ac01',text:'Emission factor sources documented with version and vintage for every data point',must:true},
+  {id:'ac02',text:'Activity data traceable to primary source (invoice, meter reading, travel booking export)',must:true},
+  {id:'ac03',text:'Named data owner recorded for every material KPI',must:true},
+  {id:'ac04',text:'L1 \u2192 L2 \u2192 L3 review and approval documented with dates and names',must:true},
+  {id:'ac05',text:'Material Scope 3 categories identified with screening rationale documented',must:true},
+  {id:'ac06',text:'GHG Protocol boundary approach documented and applied consistently',must:true},
+  {id:'ac07',text:'Base year recalculation policy documented (what triggers a restatement)',must:true},
+  {id:'ac08',text:'Estimated vs measured data flagged and proportion tracked',must:true},
+  {id:'ac09',text:'ESG data platform or system audit trail available for assurance team review',must:false},
+  {id:'ac10',text:'Prior year comparatives available for 2+ years (time-series analysis)',must:false},
+  {id:'ac11',text:'Peer benchmarking conducted to verify reasonableness of intensity metrics',must:false},
+  {id:'ac12',text:'Board validation of materiality assessment documented (minutes or resolution)',must:true},
+  {id:'ac13',text:'Assurance provider engagement letter signed and scope of work agreed',must:false},
+  {id:'ac14',text:'Disclosure draft reviewed by legal/compliance for greenwashing risk',must:false}
+];
+
+// Runtime state
+var S1 = {}, S2 = {}, S3 = {}, MAT = {};
+(function initState() {
+  S1_SOURCES.forEach(function(s){ S1[s.id]={act:0,ef:0,tco2:null,dq:'',notes:'',baseYear:''}; });
+  S2_SOURCES.forEach(function(s){ S2[s.id]={act:0,efLB:0,efMB:0,lbT:null,mbT:null,dq:'',notes:''}; });
+  S3_CATS.forEach(function(c){ S3[c.n]={mat:'',screen:0,primary:0,dq:'',notes:''}; });
+  MAT_TOPICS.forEach(function(t){ MAT[t.id]={fin:t.fin,imp:t.imp}; });
+})();
+
+</script>
+<script>
+// ── TAB SWITCHING ─────────────────────────────────────────────
+function showTab(name) {
+  var panels = document.querySelectorAll('.tab-panel');
+  var buttons = document.querySelectorAll('.tab-btn');
+  panels.forEach(function(p) { p.classList.remove('active'); });
+  buttons.forEach(function(b) { b.classList.remove('active'); });
+  var panel = document.getElementById('tp-' + name);
+  if (panel) panel.classList.add('active');
+  buttons.forEach(function(b) {
+    if (b.getAttribute('data-tab') === name) b.classList.add('active');
+  });
+  if (name === 'dashboard') { updateDashboard(); setTimeout(drawDashCharts, 50); }
+  if (name === 'materiality') { setTimeout(drawMatCanvas, 50); }
+}
+
+// ── FRAMEWORK GRID ────────────────────────────────────────────
+function buildFrameworks() {
+  var g = document.getElementById('fwGrid');
+  if (!g) return;
+  g.innerHTML = FRAMEWORKS.map(function(f) {
+    return '<label class="fw-item' + (f.checked ? ' sel' : '') + '" id="fwl-' + f.id + '">' +
+      '<input type="checkbox" id="fw-' + f.id + '"' + (f.checked ? ' checked' : '') +
+      ' onchange="toggleFW(\'' + f.id + '\')" />' +
+      '<div><div class="fw-label">' + f.label + '</div>' +
+      '<div class="fw-desc">' + f.desc + '</div></div></label>';
+  }).join('');
+}
+function toggleFW(id) {
+  var lbl = document.getElementById('fwl-' + id);
+  var ck  = document.getElementById('fw-'  + id);
+  if (lbl && ck) lbl.classList.toggle('sel', ck.checked);
+}
+
+// ── MATERIALITY TABLE ─────────────────────────────────────────
+function buildMatTable() {
+  var body = document.getElementById('matBody');
+  if (!body) return;
+  var rows = '';
+  MAT_TOPICS.forEach(function(t) {
+    var fin = MAT[t.id].fin, imp = MAT[t.id].imp;
+    var score = fin + imp;
+    var r = matRating(fin, imp);
+    rows += '<tr>' +
+      '<td><span class="pill pill-' + t.p + '">' + t.p + '</span></td>' +
+      '<td style="font-weight:600;color:#1e293b">' + t.t + '</td>' +
+      '<td><input type="number" class="sc-inp" min="1" max="5" value="' + fin +
+        '" id="mf-' + t.id + '" oninput="onMatScore(\'' + t.id + '\')" /></td>' +
+      '<td><input type="number" class="sc-inp" min="1" max="5" value="' + imp +
+        '" id="mi-' + t.id + '" oninput="onMatScore(\'' + t.id + '\')" /></td>' +
+      '<td><span class="mat-badge" id="mb-' + t.id + '" style="background:' + r.col + '22;color:' + r.col + '">' + score + '</span></td>' +
+      '<td><span id="ml-' + t.id + '" style="font-size:.72rem;font-weight:700;color:' + r.col + '">' + r.label + '</span></td>' +
+      '<td style="text-align:center"><input type="checkbox"' + (score >= 6 ? ' checked' : '') +
+        ' id="mc-' + t.id + '" style="accent-color:#1d4ed8;cursor:pointer" /></td>' +
+      '</tr>';
+  });
+  body.innerHTML = rows;
+}
+function matRating(fin, imp) {
+  if (fin >= 4 && imp >= 4) return {label:'🔴 Priority Material', col:'#dc2626'};
+  if (fin >= 4 || imp >= 4) return {label:'🟠 Material',          col:'#d97706'};
+  if (fin >= 3 || imp >= 3) return {label:'🟡 Monitor',           col:'#ca8a04'};
+  return {label:'⚪ Low Priority', col:'#94a3b8'};
+}
+function onMatScore(id) {
+  var fin = Math.max(1, Math.min(5, parseInt(document.getElementById('mf-' + id).value) || 1));
+  var imp = Math.max(1, Math.min(5, parseInt(document.getElementById('mi-' + id).value) || 1));
+  MAT[id] = {fin:fin, imp:imp};
+  var score = fin + imp;
+  var r = matRating(fin, imp);
+  var mb = document.getElementById('mb-' + id);
+  var ml = document.getElementById('ml-' + id);
+  var mc = document.getElementById('mc-' + id);
+  if (mb) { mb.textContent = score; mb.style.background = r.col + '22'; mb.style.color = r.col; }
+  if (ml) { ml.textContent = r.label; ml.style.color = r.col; }
+  if (mc && score >= 6) mc.checked = true;
+  drawMatCanvas();
+  calcProgress();
+}
+function addTopic() {
+  var name = prompt('Enter custom topic name:');
+  if (!name) return;
+  var id = 'cx' + Date.now();
+  MAT_TOPICS.push({id:id, p:'E', t:name, fin:3, imp:3});
+  MAT[id] = {fin:3, imp:3};
+  buildMatTable();
+}
+
+// ── MATERIALITY CANVAS ────────────────────────────────────────
+function drawMatCanvas() {
+  var canvas = document.getElementById('matCanvas');
+  if (!canvas || !canvas.getContext) return;
+  var W = 480, H = 400;
+  var ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+  var pad = {t:30, r:20, b:50, l:55};
+  var pW = W - pad.l - pad.r, pH = H - pad.t - pad.b;
+  var mx = pad.l + pW * 0.6, my = pad.t + pH * 0.4;
+
+  // Quadrant backgrounds
+  ctx.fillStyle = '#f8fafc'; ctx.fillRect(pad.l, pad.t, pW, pH);
+  ctx.fillStyle = '#fff7ed'; ctx.fillRect(mx, pad.t, W-pad.r-mx, my-pad.t);
+  ctx.fillStyle = '#fef2f2'; ctx.fillRect(mx, my, W-pad.r-mx, pad.t+pH-my);
+  ctx.fillStyle = '#f0fdf4'; ctx.fillRect(pad.l, pad.t, mx-pad.l, my-pad.t);
+
+  // Grid lines
+  ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1;
+  for (var v = 1; v <= 5; v++) {
+    var gx = pad.l + ((v-1)/4)*pW;
+    var gy = pad.t + ((5-v)/4)*pH;
+    ctx.beginPath(); ctx.moveTo(gx, pad.t); ctx.lineTo(gx, pad.t+pH); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pad.l, gy); ctx.lineTo(pad.l+pW, gy); ctx.stroke();
+  }
+
+  // Axis labels
+  ctx.fillStyle = '#64748b'; ctx.font = '9px Inter,sans-serif'; ctx.textAlign = 'center';
+  for (var v2 = 1; v2 <= 5; v2++) {
+    ctx.fillText(v2, pad.l + ((v2-1)/4)*pW, pad.t+pH+16);
+    ctx.fillText(v2, pad.l-16, pad.t + ((5-v2)/4)*pH + 3);
+  }
+  ctx.fillText('Financial Significance \u2192', pad.l+pW/2, H-8);
+  ctx.save(); ctx.translate(12, pad.t+pH/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('\u2190 Stakeholder / Impact', 0, 0); ctx.restore();
+
+  // Quadrant labels
+  ctx.font = 'bold 9px Inter,sans-serif';
+  ctx.fillStyle = '#16a34a'; ctx.textAlign = 'left';
+  ctx.fillText('MONITOR', pad.l+5, pad.t+14);
+  ctx.fillStyle = '#d97706'; ctx.fillText('MATERIAL', mx+5, pad.t+14);
+  ctx.fillStyle = '#dc2626'; ctx.fillText('PRIORITY MATERIAL', mx+5, my+14);
+
+  // Dots
+  MAT_TOPICS.forEach(function(t) {
+    var st = MAT[t.id]; if (!st) return;
+    var x = pad.l + ((st.fin-1)/4)*pW;
+    var y = pad.t + ((5-st.imp)/4)*pH;
+    var r = matRating(st.fin, st.imp);
+    ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI*2);
+    ctx.fillStyle = r.col; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
+  });
+
+  // Priority list
+  var priority = MAT_TOPICS.filter(function(t){ var s=MAT[t.id]; return s&&s.fin>=4&&s.imp>=4; });
+  var material = MAT_TOPICS.filter(function(t){ var s=MAT[t.id]; return s&&(s.fin>=4||s.imp>=4)&&!(s.fin>=4&&s.imp>=4); });
+  var pl = document.getElementById('matPriList');
+  if (!pl) return;
+  if (!priority.length && !material.length) {
+    pl.innerHTML = '<div class="empty-state">Score topics above to generate the priority list.</div>';
+    return;
+  }
+  var html = '';
+  if (priority.length) {
+    html += '<div style="font-size:.78rem;font-weight:700;color:#1e293b;margin-bottom:8px">Priority Material Topics (both axes \u22654):</div>';
+    priority.forEach(function(t){
+      var s=MAT[t.id];
+      html += '<div class="mpl-item"><span class="pill pill-'+t.p+'">'+t.p+'</span>' +
+        '<span style="font-weight:600;flex:1">'+t.t+'</span>' +
+        '<span style="font-size:.7rem;background:#fee2e2;color:#dc2626;padding:2px 8px;border-radius:20px">Fin:'+s.fin+' Imp:'+s.imp+'</span></div>';
+    });
+  }
+  if (material.length) {
+    html += '<div style="font-size:.78rem;font-weight:700;color:#1e293b;margin:12px 0 8px">Material Topics (one axis \u22654):</div>';
+    material.forEach(function(t){
+      var s=MAT[t.id];
+      html += '<div class="mpl-item"><span class="pill pill-'+t.p+'">'+t.p+'</span>' +
+        '<span style="flex:1">'+t.t+'</span>' +
+        '<span style="font-size:.7rem;background:#fff7ed;color:#d97706;padding:2px 8px;border-radius:20px">Fin:'+s.fin+' Imp:'+s.imp+'</span></div>';
+    });
+  }
+  pl.innerHTML = html;
+}
+
+// ── BUILD SCOPE 1 ─────────────────────────────────────────────
+function buildScope1() {
+  var stack = document.getElementById('s1Stack');
+  if (!stack) return;
+  var html = '';
+  S1_SOURCES.forEach(function(src) {
+    html += '<div class="src-card" id="sc-' + src.id + '">' +
+      '<div class="src-top">' +
+        '<div class="src-id-cell">' + src.id + '</div>' +
+        '<div class="src-info">' +
+          '<div class="src-name">' + src.name + '</div>' +
+          '<div class="src-desc">' + src.desc + '</div>' +
+          '<div class="src-ef">EF: ' + src.ef + ' &nbsp;|&nbsp; Unit: ' + src.unit + '</div>' +
+          '<button class="guid-btn" onclick="toggleGuid(\'' + src.id + '\')">+ Data collection guidance</button>' +
+          '<div class="guid-txt" id="gt-' + src.id + '">\uD83D\uDCCB ' + src.hint + '</div>' +
+        '</div>' +
+        '<div class="src-result">' +
+          '<div class="res-val" id="rv-' + src.id + '">\u2014</div>' +
+          '<div class="res-unit">tCO\u2082e</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="src-inputs">' +
+        '<div class="inp-col"><div class="inp-lbl">Activity (' + src.unit + ')</div>' +
+          '<input type="number" class="inp-f" min="0" step="any" placeholder="0"' +
+          ' id="act-' + src.id + '" oninput="onS1(\'' + src.id + '\')" />' +
+          '<div class="inp-hint">Measured or estimated quantity</div></div>' +
+        '<div class="inp-col"><div class="inp-lbl">EF (kgCO\u2082e/unit)</div>' +
+          '<input type="number" class="inp-f" min="0" step="any" placeholder="e.g. 0.18254"' +
+          ' id="ef-' + src.id + '" oninput="onS1(\'' + src.id + '\')" />' +
+          '<div class="inp-hint">DEFRA / EPA / BEE EF</div></div>' +
+        '<div class="inp-col"><div class="inp-lbl">Data Quality</div>' +
+          '<select class="inp-f" id="dq-' + src.id + '" onchange="S1[\'' + src.id + '\'].dq=this.value;calcProgress()">' +
+          '<option value="">Select\u2026</option>' +
+          '<option>\u2705 Measured</option><option>\uD83D\uDCB0 Calculated</option>' +
+          '<option>\uD83D\uDCCA Estimated</option><option>N/A</option></select>' +
+          '<div class="inp-hint">Required for assurance</div></div>' +
+        '<div class="inp-col"><div class="inp-lbl">Base Year</div>' +
+          '<input type="text" class="inp-f" placeholder="e.g. FY 2025-26"' +
+          ' id="by-' + src.id + '" oninput="S1[\'' + src.id + '\'].baseYear=this.value" /></div>' +
+        '<div class="inp-col"><div class="inp-lbl">Notes / Source</div>' +
+          '<input type="text" class="inp-f" placeholder="e.g. Gas meter Jan-Dec 2025"' +
+          ' id="nt-' + src.id + '" oninput="S1[\'' + src.id + '\'].notes=this.value" /></div>' +
+      '</div></div>';
+  });
+  stack.innerHTML = html;
+}
+function onS1(id) {
+  var act = parseFloat(document.getElementById('act-' + id).value) || 0;
+  var ef  = parseFloat(document.getElementById('ef-'  + id).value) || 0;
+  var tco2 = (act > 0 && ef > 0) ? (act * ef) / 1000 : null;
+  S1[id].act = act; S1[id].ef = ef; S1[id].tco2 = tco2;
+  setResVal(id, tco2);
+  updateS1Total(); calcProgress(); updateDashboard();
+}
+
+// ── BUILD SCOPE 2 ─────────────────────────────────────────────
+function buildScope2() {
+  var stack = document.getElementById('s2Stack');
+  if (!stack) return;
+  var html = '';
+  S2_SOURCES.forEach(function(src) {
+    html += '<div class="src-card" id="sc-' + src.id + '">' +
+      '<div class="src-top">' +
+        '<div class="src-id-cell">' + src.id + '</div>' +
+        '<div class="src-info">' +
+          '<div class="src-name">' + src.name + '</div>' +
+          '<div class="src-desc">' + src.desc + '</div>' +
+          '<div class="src-ef">' + src.efRef + ' &nbsp;|&nbsp; Unit: ' + src.unit + '</div>' +
+          '<button class="guid-btn" onclick="toggleGuid(\'' + src.id + '\')">+ Dual reporting guidance</button>' +
+          '<div class="guid-txt" id="gt-' + src.id + '">\uD83D\uDCCB ' + src.hint + '</div>' +
+        '</div>' +
+        '<div class="src-result">' +
+          '<div class="res-val" id="rv-' + src.id + '">\u2014</div>' +
+          '<div class="res-unit">tCO\u2082e (LB)</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="src-inputs s2-inp">' +
+        '<div class="inp-col"><div class="inp-lbl">Activity (kWh)</div>' +
+          '<input type="number" class="inp-f" min="0" step="any" placeholder="0"' +
+          ' id="actLB-' + src.id + '" oninput="onS2(\'' + src.id + '\')" />' +
+          '<div class="inp-hint">kWh from invoices/smart meters</div></div>' +
+        '<div class="inp-col"><div class="inp-lbl">Location-Based EF</div>' +
+          '<input type="number" class="inp-f" min="0" step="any" placeholder="e.g. 0.20705"' +
+          ' id="efLB-' + src.id + '" oninput="onS2(\'' + src.id + '\')" />' +
+          '<div class="inp-hint">National grid EF (DEFRA/IEA/CEA)</div></div>' +
+        '<div class="inp-col"><div class="inp-lbl">Market-Based EF</div>' +
+          '<input type="number" class="inp-f" min="0" step="any" placeholder="0 if 100% renewable"' +
+          ' id="efMB-' + src.id + '" oninput="onS2(\'' + src.id + '\')" />' +
+          '<div class="inp-hint">0 = I-REC/GO covered</div></div>' +
+        '<div class="inp-col"><div class="inp-lbl">Data Quality</div>' +
+          '<select class="inp-f" id="dq2-' + src.id + '" onchange="S2[\'' + src.id + '\'].dq=this.value">' +
+          '<option value="">Select\u2026</option>' +
+          '<option>\u2705 Measured</option><option>\uD83D\uDCB0 Calculated</option>' +
+          '<option>\uD83D\uDCCA Estimated</option><option>N/A</option></select></div>' +
+        '<div class="inp-col"><div class="inp-lbl">Notes</div>' +
+          '<input type="text" class="inp-f" placeholder="e.g. Site-level metered"' +
+          ' id="nt2-' + src.id + '" oninput="S2[\'' + src.id + '\'].notes=this.value" /></div>' +
+      '</div></div>';
+  });
+  stack.innerHTML = html;
+}
+function onS2(id) {
+  var actLB = parseFloat(document.getElementById('actLB-' + id).value) || 0;
+  var efLB  = parseFloat(document.getElementById('efLB-'  + id).value) || 0;
+  var efMB  = parseFloat(document.getElementById('efMB-'  + id).value) || 0;
+  var lbT = (actLB > 0 && efLB > 0) ? (actLB * efLB) / 1000 : null;
+  var mbT = (actLB > 0) ? (actLB * efMB) / 1000 : null;
+  S2[id].act=actLB; S2[id].efLB=efLB; S2[id].efMB=efMB; S2[id].lbT=lbT; S2[id].mbT=mbT;
+  setResVal(id, lbT);
+  updateS2Total(); calcProgress(); updateDashboard();
+}
+
+// ── BUILD SCOPE 3 ─────────────────────────────────────────────
+function buildScope3() {
+  var wrap = document.getElementById('s3Cats');
+  if (!wrap) return;
+  var priCol = {HIGH:'#dc2626', MEDIUM:'#d97706', LOW:'#94a3b8', CRITICAL:'#7c3aed'};
+  var html = '';
+  S3_CATS.forEach(function(c) {
+    var pc = priCol[c.pri] || '#64748b';
+    html += '<div class="s3-cat">' +
+      '<div class="s3-hd" onclick="toggleS3(' + c.n + ')">' +
+        '<span class="s3-num">Cat ' + c.n + '</span>' +
+        '<span class="s3-name">' + c.name + '</span>' +
+        '<span class="s3-pbadge" style="background:' + pc + '22;color:' + pc + '">' + c.pri + '</span>' +
+        '<span class="s3-disp" id="s3d-' + c.n + '">\u2014</span>' +
+        '<span class="s3-tog open" id="s3t-' + c.n + '">\u25B2</span>' +
+      '</div>' +
+      '<div class="s3-body" id="s3b-' + c.n + '">' +
+        '<div class="fg"><div class="inp-lbl">Materiality</div>' +
+          '<select class="inp-f" id="s3m-' + c.n + '" onchange="onS3(' + c.n + ')">' +
+          '<option value="">Select\u2026</option>' +
+          '<option>Material \u2014 include in baseline</option>' +
+          '<option>Likely material \u2014 screening needed</option>' +
+          '<option>Not material \u2014 document rationale</option>' +
+          '<option>Not yet assessed</option></select>' +
+          '<div class="inp-hint">ESRS E1 requires all 15 assessed</div></div>' +
+        '<div class="fg"><div class="inp-lbl">Screening (tCO\u2082e)</div>' +
+          '<input type="number" class="inp-f" min="0" step="any" placeholder="Spend-based estimate"' +
+          ' id="s3sc-' + c.n + '" oninput="onS3(' + c.n + ')" />' +
+          '<div class="inp-hint">Method: ' + c.method + '</div></div>' +
+        '<div class="fg"><div class="inp-lbl">Primary Data (tCO\u2082e)</div>' +
+          '<input type="number" class="inp-f" min="0" step="any" placeholder="Calculated if material"' +
+          ' id="s3pr-' + c.n + '" oninput="onS3(' + c.n + ')" />' +
+          '<div class="inp-hint">EF source: ' + c.ef + '</div></div>' +
+        '<div class="fg"><div class="inp-lbl">Notes / Source</div>' +
+          '<input type="text" class="inp-f" placeholder="e.g. Supplier PCF / spend-based"' +
+          ' id="s3nt-' + c.n + '" oninput="S3[' + c.n + '].notes=this.value" />' +
+          '<div class="inp-hint" style="margin-top:6px">' +
+          '<select class="inp-f" id="s3dq-' + c.n + '" onchange="S3[' + c.n + '].dq=this.value">' +
+          '<option value="">Data quality\u2026</option>' +
+          '<option>\u2705 Supplier primary</option><option>\uD83D\uDCB0 Activity-based</option>' +
+          '<option>\uD83D\uDCCA Spend-based (MRIO)</option><option>Estimation only</option></select></div></div>' +
+      '</div></div>';
+  });
+  wrap.innerHTML = html;
+}
+function toggleS3(n) {
+  var body = document.getElementById('s3b-' + n);
+  var tog  = document.getElementById('s3t-' + n);
+  if (!body) return;
+  var isClosed = body.classList.contains('closed');
+  body.classList.toggle('closed', !isClosed);
+  if (tog) { tog.textContent = isClosed ? '\u25B2' : '\u25BC'; tog.classList.toggle('open', isClosed); }
+}
+function onS3(n) {
+  var screen  = parseFloat(document.getElementById('s3sc-' + n).value) || 0;
+  var primary = parseFloat(document.getElementById('s3pr-' + n).value) || 0;
+  var mat     = document.getElementById('s3m-'  + n).value || '';
+  S3[n].mat=mat; S3[n].screen=screen; S3[n].primary=primary;
+  var best = primary > 0 ? primary : screen;
+  var disp = document.getElementById('s3d-' + n);
+  if (disp) disp.textContent = best > 0 ? fmt(best) + ' tCO\u2082e' : '\u2014';
+  updateS3Total(); calcProgress(); updateDashboard();
+}
+
+// ── BUILD PLATFORMS ───────────────────────────────────────────
+function buildPlatforms() {
+  var g = document.getElementById('platGrid');
+  if (!g) return;
+  g.innerHTML = PLATFORMS.map(function(p) {
+    return '<div class="plat-card"><div class="plat-name">' + p.name + '</div>' +
+      '<div class="plat-best">Best for: ' + p.best + '</div>' +
+      '<div class="plat-str">' + p.str + '</div></div>';
+  }).join('');
+}
+
+// ── BUILD ASSURANCE LIST ──────────────────────────────────────
+function buildAssurance() {
+  var wrap = document.getElementById('assurList');
+  if (!wrap) return;
+  wrap.innerHTML = ASSUR_ITEMS.map(function(item) {
+    return '<div class="cl-item"><input type="checkbox" id="' + item.id +
+      '" onchange="calcProgress()" />' +
+      (item.must ? '<span class="cl-must">MUST</span>' : '') +
+      '<span>' + item.text + '</span></div>';
+  }).join('');
+}
+
+// ── HELPERS ───────────────────────────────────────────────────
+function fmt(v) {
+  if (!v || v <= 0) return '\u2014';
+  if (v >= 1000) return (v/1000).toFixed(1) + 'k';
+  return v.toFixed(1);
+}
+function setEl(id, val) {
+  var el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+function setHTML(id, val) {
+  var el = document.getElementById(id);
+  if (el) el.innerHTML = val;
+}
+function getVal(id) {
+  var el = document.getElementById(id);
+  return el ? el.value : '';
+}
+function setResVal(id, tco2) {
+  var el   = document.getElementById('rv-' + id);
+  var card = document.getElementById('sc-' + id);
+  if (!el) return;
+  if (tco2 !== null && tco2 > 0) {
+    el.textContent = fmt(tco2); el.classList.add('live');
+    if (card) card.classList.add('has-data');
+  } else {
+    el.textContent = '\u2014'; el.classList.remove('live');
+    if (card) card.classList.remove('has-data');
+  }
+}
+function toggleGuid(id) {
+  var el  = document.getElementById('gt-' + id);
+  var btn = el ? el.previousElementSibling : null;
+  if (!el) return;
+  el.classList.toggle('show');
+  if (btn) btn.textContent = el.classList.contains('show') ? '\u2212 Hide guidance' : '+ Data collection guidance';
+}
+
+// ── TOTALS ────────────────────────────────────────────────────
+function updateS1Total() {
+  var tot = 0;
+  S1_SOURCES.forEach(function(s){ if (S1[s.id].tco2 > 0) tot += S1[s.id].tco2; });
+  setEl('s1Total', fmt(tot)); setEl('s1TotalBar', fmt(tot));
+}
+function updateS2Total() {
+  var lb = 0, mb = 0;
+  S2_SOURCES.forEach(function(s){ if(S2[s.id].lbT>0) lb+=S2[s.id].lbT; if(S2[s.id].mbT>0) mb+=S2[s.id].mbT; });
+  setEl('s2Total', fmt(lb) + ' LB'); setEl('s2LBBar', fmt(lb)); setEl('s2MBBar', fmt(mb));
+}
+function updateS3Total() {
+  var tot=0, cnt=0;
+  S3_CATS.forEach(function(c){ var b=S3[c.n].primary>0?S3[c.n].primary:S3[c.n].screen; if(b>0){tot+=b;cnt++;} });
+  setEl('s3Total', fmt(tot)); setEl('s3TotalBar', fmt(tot)); setEl('s3Count', cnt);
+}
+
+// ── PROGRESS ─────────────────────────────────────────────────
+function calcProgress() {
+  var scores = [];
+  var chFields = ['ch-org','ch-boundary','ch-lead','ch-approved'];
+  scores.push(chFields.filter(function(id){ return getVal(id); }).length / chFields.length);
+  scores.push(Object.keys(MAT).filter(function(k){ return MAT[k].fin && MAT[k].imp; }).length / MAT_TOPICS.length);
+  scores.push(S1_SOURCES.filter(function(s){ return S1[s.id].act > 0; }).length / S1_SOURCES.length);
+  scores.push(S2_SOURCES.filter(function(s){ return S2[s.id].act > 0; }).length / S2_SOURCES.length);
+  scores.push(S3_CATS.filter(function(c){ return S3[c.n].mat; }).length / S3_CATS.length);
+  var dFields = ['d-s1own','d-s2own','d-s3own'];
+  scores.push(dFields.filter(function(id){ return getVal(id); }).length / dFields.length);
+  var avg = scores.reduce(function(a,b){return a+b;}, 0) / scores.length;
+  var pct = Math.round(avg * 100);
+  var fill = document.getElementById('progFill');
+  if (fill) fill.style.width = pct + '%';
+  setEl('progLabel', 'Phase 1 completion: ' + pct + '%');
+  var started = scores.filter(function(s){ return s > 0; }).length;
+  setEl('progPct', started + ' / 6 sections started');
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────
+function updateDashboard() {
+  var s1t=0, s2lb=0, s2mb=0, s3t=0;
+  S1_SOURCES.forEach(function(s){ if(S1[s.id].tco2>0) s1t+=S1[s.id].tco2; });
+  S2_SOURCES.forEach(function(s){ if(S2[s.id].lbT>0) s2lb+=S2[s.id].lbT; if(S2[s.id].mbT>0) s2mb+=S2[s.id].mbT; });
+  S3_CATS.forEach(function(c){ var b=S3[c.n].primary>0?S3[c.n].primary:S3[c.n].screen; if(b>0) s3t+=b; });
+  setEl('db-s1', fmt(s1t)); setEl('db-s2lb', fmt(s2lb));
+  setEl('db-s2mb', fmt(s2mb)); setEl('db-s3', fmt(s3t)); setEl('db-tot', fmt(s1t+s2lb+s3t));
+
+  var org = getVal('ch-org');
+  setEl('db-ch-s', org ? org + ' — charter in progress' : 'Not started');
+  setEl('db-ch-d', getVal('ch-boundary') ? 'Boundary: ' + getVal('ch-boundary') : 'Boundary not selected');
+  var mN = Object.keys(MAT).filter(function(k){return MAT[k].fin&&MAT[k].imp;}).length;
+  var pN = MAT_TOPICS.filter(function(t){var s=MAT[t.id];return s&&s.fin>=4&&s.imp>=4;}).length;
+  setEl('db-mat-s', mN > 0 ? mN+'/'+MAT_TOPICS.length+' topics scored' : 'Not started');
+  setEl('db-mat-d', pN + ' priority material topics identified');
+  var s1n = S1_SOURCES.filter(function(s){return S1[s.id].act>0;}).length;
+  setEl('db-s1-s', s1t>0?fmt(s1t)+' tCO\u2082e':s1n>0?'In progress':'Not started');
+  setEl('db-s1-d', s1n+'/'+S1_SOURCES.length+' source categories entered');
+  var s2n = S2_SOURCES.filter(function(s){return S2[s.id].act>0;}).length;
+  setEl('db-s2-s', s2lb>0?fmt(s2lb)+' LB / '+fmt(s2mb)+' MB':s2n>0?'In progress':'Not started');
+  setEl('db-s2-d', s2n+'/'+S2_SOURCES.length+' energy sources entered');
+  var s3n = S3_CATS.filter(function(c){return S3[c.n].mat;}).length;
+  setEl('db-s3-s', s3t>0?fmt(s3t)+' tCO\u2082e ('+s3n+' cats)':s3n>0?s3n+' assessed':'Not started');
+  setEl('db-s3-d', s3n+'/15 GHG Protocol categories assessed');
+  var dn = ['d-s1own','d-s2own','d-s3own'].filter(function(id){return getVal(id);}).length;
+  setEl('db-data-s', dn>0?dn+'/3 key data owners named':'Not started');
+  setEl('db-data-d', getVal('d-platform')?'Platform: '+getVal('d-platform'):'Platform not selected');
+
+  var steps = [];
+  if (!org) steps.push('\uD83D\uDCCB <strong>Start with the Programme Charter</strong> \u2014 define your reporting boundary, applicable frameworks, and board approval process.');
+  if (s1t === 0) steps.push('\uD83D\uDD25 <strong>Complete Scope 1 baseline</strong> \u2014 collect gas meter readings, fuel delivery records, and F-Gas service logs. Aim for Measured data quality on all major sources.');
+  if (s2lb === 0) steps.push('\u26A1 <strong>Complete Scope 2 dual reporting</strong> \u2014 both location-based and market-based required by GHG Protocol, ESRS E1, and CDP.');
+  if (s3n < 5) steps.push('\uD83C\uDF10 <strong>Screen all 15 Scope 3 categories</strong> \u2014 run spend-based estimates first. Typically 1\u20133 categories represent 80%+ of Scope 3.');
+  if (s1t>0 && s2lb>0 && s3t>0) steps.push('\u2705 <strong>Emissions baseline complete</strong> \u2014 arrange third-party verification before using figures for SBTi submission or regulatory disclosure.');
+  if (steps.length === 0) steps.push('\uD83C\uDFAF Phase 1 progressing well. Next: finalise assurance provider engagement and begin target-setting against the verified baseline.');
+  setHTML('dbNext', steps.join('<br/><br/>'));
+}
+
+function drawDashCharts() { drawScopeBar(); drawComplBar(); }
+function drawScopeBar() {
+  var s1t=0,s2lb=0,s2mb=0,s3t=0;
+  S1_SOURCES.forEach(function(s){if(S1[s.id].tco2>0)s1t+=S1[s.id].tco2;});
+  S2_SOURCES.forEach(function(s){if(S2[s.id].lbT>0)s2lb+=S2[s.id].lbT;if(S2[s.id].mbT>0)s2mb+=S2[s.id].mbT;});
+  S3_CATS.forEach(function(c){var b=S3[c.n].primary>0?S3[c.n].primary:S3[c.n].screen;if(b>0)s3t+=b;});
+  drawBar('dbScope',[{l:'Scope 1',v:s1t,c:'#b91c1c'},{l:'S2 LB',v:s2lb,c:'#d97706'},{l:'S2 MB',v:s2mb,c:'#16a34a'},{l:'Scope 3',v:s3t,c:'#1d4ed8'}]);
+}
+function drawComplBar() {
+  var chF=['ch-org','ch-boundary','ch-lead','ch-approved'];
+  var dF=['d-s1own','d-s2own','d-s3own'];
+  drawBar('dbCompl',[
+    {l:'Charter',   v:chF.filter(function(id){return getVal(id);}).length/chF.length*100, c:'#4f46e5'},
+    {l:'Material.', v:Object.keys(MAT).filter(function(k){return MAT[k].fin&&MAT[k].imp;}).length/MAT_TOPICS.length*100, c:'#d97706'},
+    {l:'Scope 1',   v:S1_SOURCES.filter(function(s){return S1[s.id].act>0;}).length/S1_SOURCES.length*100, c:'#b91c1c'},
+    {l:'Scope 2',   v:S2_SOURCES.filter(function(s){return S2[s.id].act>0;}).length/S2_SOURCES.length*100, c:'#d97706'},
+    {l:'Scope 3',   v:S3_CATS.filter(function(c){return S3[c.n].mat;}).length/S3_CATS.length*100, c:'#1d4ed8'},
+    {l:'Data',      v:dF.filter(function(id){return getVal(id);}).length/dF.length*100, c:'#059669'}
+  ]);
+}
+function drawBar(canvasId, bars) {
+  var canvas = document.getElementById(canvasId);
+  if (!canvas || !canvas.getContext) return;
+  var W = canvas.parentElement.offsetWidth || 340, H = 240;
+  canvas.width = W; canvas.height = H;
+  var ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#f8fafc'; ctx.fillRect(0,0,W,H);
+  var maxV = Math.max.apply(null, bars.map(function(b){return b.v;}));
+  if (!maxV) maxV = 1;
+  var pad={t:28,r:12,b:44,l:50}, pW=W-pad.l-pad.r, pH=H-pad.t-pad.b;
+  var bw = Math.max(18, (pW/bars.length)-14);
+  ctx.strokeStyle='#e2e8f0'; ctx.lineWidth=1;
+  [0,0.5,1].forEach(function(f){
+    var y=pad.t+pH*(1-f);
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(W-pad.r,y); ctx.stroke();
+    ctx.fillStyle='#94a3b8'; ctx.font='8px Inter,sans-serif'; ctx.textAlign='right';
+    var v=maxV*f; ctx.fillText(v>=1000?(v/1000).toFixed(0)+'k':v.toFixed(0),pad.l-3,y+3);
+  });
+  bars.forEach(function(b,i){
+    if (!b.v || b.v <= 0) {
+      ctx.fillStyle='#64748b'; ctx.font='8px Inter,sans-serif'; ctx.textAlign='center';
+      ctx.fillText(b.l, pad.l+i*(pW/bars.length)+(pW/bars.length)/2, H-pad.b+14);
+      return;
+    }
+    var bh=Math.max(2,(b.v/maxV)*pH);
+    var x=pad.l+i*(pW/bars.length)+(pW/bars.length-bw)/2;
+    var y=pad.t+pH-bh;
+    ctx.fillStyle=b.c;
+    if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(x,y,bw,bh,[3,3,0,0]); ctx.fill(); }
+    else { ctx.fillRect(x,y,bw,bh); }
+    ctx.fillStyle='#1e293b'; ctx.font='bold 8px Inter,sans-serif'; ctx.textAlign='center';
+    ctx.fillText(b.v>=1000?(b.v/1000).toFixed(0)+'k':b.v.toFixed(1),x+bw/2,y-4);
+    ctx.fillStyle=b.c; ctx.font='8px Inter,sans-serif';
+    ctx.fillText(b.l, x+bw/2, H-pad.b+14);
+  });
+}
+
+// ── EXPORT / IMPORT / RESET ───────────────────────────────────
+function doExportJSON() {
+  var payload = {
+    meta:{tool:'ESG Phase 1 Toolkit Ch11',v:'3.0',exported:new Date().toISOString()},
+    charter:{org:getVal('ch-org'),country:getVal('ch-country'),sector:getVal('ch-sector'),
+             boundary:getVal('ch-boundary'),chain:getVal('ch-chain'),baseYear:getVal('ch-baseyear'),
+             lead:getVal('ch-lead'),sponsor:getVal('ch-sponsor'),board:getVal('ch-board'),approved:getVal('ch-approved')},
+    S1:S1, S2:S2, S3:S3, MAT:MAT
+  };
+  dl(JSON.stringify(payload,null,2),
+     (getVal('ch-org')||'ESG').replace(/\s+/g,'_')+'_Phase1_'+new Date().toISOString().slice(0,10)+'.json',
+     'application/json');
+}
+function doExportCSV() {
+  var rows=[['Section','Item','Value']];
+  rows.push(['Charter','Organisation',getVal('ch-org')],['Charter','Boundary',getVal('ch-boundary')]);
+  S1_SOURCES.forEach(function(s){rows.push(['Scope 1',s.name,(S1[s.id].tco2||0).toFixed(2)]);});
+  S2_SOURCES.forEach(function(s){rows.push(['Scope 2 LB',s.name,(S2[s.id].lbT||0).toFixed(2)]);});
+  S3_CATS.forEach(function(c){var b=S3[c.n].primary||S3[c.n].screen||0;rows.push(['Scope 3','Cat '+c.n+': '+c.name,b.toFixed(2)]);});
+  MAT_TOPICS.forEach(function(t){var s=MAT[t.id];rows.push(['Materiality',t.t,'Fin:'+s.fin+' Imp:'+s.imp]);});
+  dl(rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n'),
+     (getVal('ch-org')||'ESG').replace(/\s+/g,'_')+'_Phase1.csv','text/csv');
+}
+function doImportJSON() { document.getElementById('importFile').click(); }
+function doReset() {
+  if (!confirm('Reset all Phase 1 data? This cannot be undone.')) return;
+  S1_SOURCES.forEach(function(s){ S1[s.id]={act:0,ef:0,tco2:null,dq:'',notes:'',baseYear:''}; });
+  S2_SOURCES.forEach(function(s){ S2[s.id]={act:0,efLB:0,efMB:0,lbT:null,mbT:null,dq:'',notes:''}; });
+  S3_CATS.forEach(function(c){ S3[c.n]={mat:'',screen:0,primary:0,dq:'',notes:''}; });
+  MAT_TOPICS.forEach(function(t){ MAT[t.id]={fin:t.fin,imp:t.imp}; });
+  document.querySelectorAll('input:not([type=checkbox]),select,textarea').forEach(function(el){el.value='';});
+  document.querySelectorAll('input[type=checkbox]').forEach(function(el){el.checked=false;});
+  buildMatTable(); buildScope1(); buildScope2(); buildScope3();
+  updateS1Total(); updateS2Total(); updateS3Total();
+  drawMatCanvas(); calcProgress(); updateDashboard();
+}
+function dl(content, filename, type) {
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content],{type:type}));
+  a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', function() {
+  buildFrameworks();
+  buildMatTable();
+  buildScope1();
+  buildScope2();
+  buildScope3();
+  buildPlatforms();
+  buildAssurance();
+
+  var importFileEl = document.getElementById('importFile');
+  if (importFileEl) importFileEl.addEventListener('change', function(e) {
+    var file = e.target.files[0]; if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      try {
+        var p = JSON.parse(ev.target.result);
+        if (p.S1) Object.assign(S1, p.S1);
+        if (p.S2) Object.assign(S2, p.S2);
+        if (p.S3) Object.assign(S3, p.S3);
+        if (p.MAT) Object.assign(MAT, p.MAT);
+        if (p.charter) {
+          Object.keys(p.charter).forEach(function(k){
+            var el=document.getElementById('ch-'+k); if(el) el.value=p.charter[k]||'';
+          });
+        }
+        buildMatTable(); buildScope1(); buildScope2(); buildScope3();
+        updateS1Total(); updateS2Total(); updateS3Total();
+        drawMatCanvas(); calcProgress(); updateDashboard();
+        alert('Imported successfully.');
+      } catch(err) { alert('Import failed: ' + err.message); }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+
+  calcProgress();
+  updateDashboard();
+});
+
+</script>
+</body>
+</html>
