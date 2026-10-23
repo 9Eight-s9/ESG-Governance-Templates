@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ESG Materiality Assessment Matrix — B.1</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ══ HEADER ══════════════════════════════════════════════════ -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <span class="header-badge">B.1</span>
+      <div>
+        <div class="header-title">ESG Materiality Assessment Matrix</div>
+        <div class="header-sub">Environmental · Social · Governance — 35-Topic Assessment Instrument</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" onclick="resetAll()">↺ Reset</button>
+      <button class="btn btn-ghost" onclick="exportJSON()">⬇ Export</button>
+      <button class="btn btn-ghost" onclick="importJSON()">⬆ Import</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨 Print</button>
+    </div>
+  </div>
+</header>
+
+<!-- ══ TAB NAV ═════════════════════════════════════════════════ -->
+<nav class="tab-nav">
+  <div class="tab-nav-inner">
+    <button class="tab-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">
+      <span class="tab-icon">📊</span>
+      <span class="tab-label">Dashboard</span>
+    </button>
+    <button class="tab-btn" data-tab="guide" onclick="switchTab('guide')">
+      <span class="tab-icon">📖</span>
+      <span class="tab-label">Guide &amp; Formula</span>
+    </button>
+    <button class="tab-btn" data-tab="E" onclick="switchTab('E')">
+      <span class="tab-icon">🌿</span>
+      <span class="tab-label">Environmental</span>
+      <span class="tab-badge" id="badge-E">13</span>
+    </button>
+    <button class="tab-btn" data-tab="S" onclick="switchTab('S')">
+      <span class="tab-icon">👥</span>
+      <span class="tab-label">Social</span>
+      <span class="tab-badge" id="badge-S">12</span>
+    </button>
+    <button class="tab-btn" data-tab="G" onclick="switchTab('G')">
+      <span class="tab-icon">🏛</span>
+      <span class="tab-label">Governance</span>
+      <span class="tab-badge" id="badge-G">10</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ══ PROGRESS STRIP ══════════════════════════════════════════ -->
+<div class="progress-strip">
+  <div class="progress-strip-inner">
+    <span id="progressLabel">0 / 35 topics scored</span>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span id="progressPct">0%</span>
+  </div>
+</div>
+
+<!-- ══ TAB PANELS ══════════════════════════════════════════════ -->
+<main class="tab-panels">
+
+  <!-- ── TAB 1: DASHBOARD ─────────────────────────────────────── -->
+  <div class="tab-panel active" id="panel-dashboard">
+    <div class="panel-scroll">
+
+      <!-- Organisation Details -->
+      <section class="dash-section org-section">
+        <div class="section-hd">
+          <span class="section-hd-icon">🏢</span>
+          <h2>Organisation Details</h2>
+          <span class="section-hd-sub">Complete before scoring — used in exports and print</span>
+        </div>
+        <div class="org-grid">
+          <div class="fg"><label class="fl">Organisation Name</label>
+            <input type="text" class="fi" id="orgName" placeholder="e.g. Acme Manufacturing Ltd"/></div>
+          <div class="fg"><label class="fl">Industry / Sector</label>
+            <input type="text" class="fi" id="orgIndustry" placeholder="e.g. Pharmaceutical Manufacturing"/></div>
+          <div class="fg"><label class="fl">Reporting Period</label>
+            <input type="text" class="fi" id="orgPeriod" placeholder="e.g. FY 2025–26"/></div>
+          <div class="fg"><label class="fl">Assessment Lead</label>
+            <input type="text" class="fi" id="orgLead" placeholder="e.g. Head of ESG"/></div>
+          <div class="fg"><label class="fl">Applicable Frameworks</label>
+            <input type="text" class="fi" id="orgFramework" placeholder="e.g. BRSR Core, GRI, CSRD"/></div>
+          <div class="fg"><label class="fl">Date of Assessment</label>
+            <input type="date" class="fi" id="orgDate"/></div>
+        </div>
+      </section>
+
+      <!-- KPI Cards -->
+      <section class="dash-section">
+        <div class="section-hd">
+          <span class="section-hd-icon">📈</span>
+          <h2>Assessment Summary</h2>
+          <span class="section-hd-sub">Calculated live as you score each topic</span>
+        </div>
+        <div class="kpi-row" id="kpiRow">
+          <div class="kpi-card kpi-index">
+            <div class="kpi-val" id="kpiIndex">—</div>
+            <div class="kpi-label">Materiality Index</div>
+            <div class="kpi-sub" id="kpiIndexSub">Score topics to calculate</div>
+          </div>
+          <div class="kpi-card kpi-high">
+            <div class="kpi-val" id="kpiHigh">0</div>
+            <div class="kpi-label">High Priority</div>
+            <div class="kpi-sub">Combined Score ≥ 3.5</div>
+          </div>
+          <div class="kpi-card kpi-med">
+            <div class="kpi-val" id="kpiMed">0</div>
+            <div class="kpi-label">Medium Priority</div>
+            <div class="kpi-sub">Score 2.0 – 3.49</div>
+          </div>
+          <div class="kpi-card kpi-low">
+            <div class="kpi-val" id="kpiLow">0</div>
+            <div class="kpi-label">Low / Monitor</div>
+            <div class="kpi-sub">Combined Score &lt; 2.0</div>
+          </div>
+          <div class="kpi-card kpi-scored">
+            <div class="kpi-val" id="kpiScored">0<span style="font-size:1.1rem;font-weight:500">/35</span></div>
+            <div class="kpi-label">Topics Scored</div>
+            <div class="kpi-sub" id="kpiScoredSub">0% complete</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Charts Row -->
+      <section class="dash-section">
+        <div class="charts-grid">
+          <!-- Pillar Breakdown Bar Chart -->
+          <div class="chart-card">
+            <div class="chart-title">Priority Distribution by Pillar</div>
+            <canvas id="chartPillar" height="220"></canvas>
+            <div class="chart-legend" id="legendPillar"></div>
+          </div>
+          <!-- Materiality Matrix Scatter -->
+          <div class="chart-card chart-card-wide">
+            <div class="chart-title">Materiality Matrix — SI vs BS (all scored topics)</div>
+            <canvas id="chartMatrix" height="260"></canvas>
+            <div class="chart-legend" style="display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;font-size:0.75rem;color:#64748b">
+              <span><span class="leg-dot" style="background:#16a34a"></span>High Priority (≥3.5)</span>
+              <span><span class="leg-dot" style="background:#d97706"></span>Medium (2.0–3.49)</span>
+              <span><span class="leg-dot" style="background:#94a3b8"></span>Low (&lt;2.0)</span>
+              <span style="font-size:0.7rem;color:#94a3b8">· Hover / dots labelled by topic ID</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Ranked Topics Table -->
+      <section class="dash-section">
+        <div class="section-hd">
+          <span class="section-hd-icon">🎯</span>
+          <h2>Priority Topic Ranking</h2>
+          <span class="section-hd-sub">All scored topics, ranked by Combined Score — highest first</span>
+        </div>
+        <div class="ranked-table-wrap" id="rankedTable">
+          <div class="empty-state">No topics scored yet — go to Environmental, Social, or Governance tabs to begin scoring.</div>
+        </div>
+      </section>
+
+      <!-- Interpretation Panel -->
+      <section class="dash-section interp-section" id="interpSection">
+        <div class="section-hd">
+          <span class="section-hd-icon">💡</span>
+          <h2>Interpretation &amp; Next Steps</h2>
+        </div>
+        <div class="interp-grid" id="interpGrid">
+          <div class="interp-card interp-card-info">
+            <div class="interp-icon">📋</div>
+            <div class="interp-title">How to Read This Dashboard</div>
+            <div class="interp-body">Score each topic in the Environmental, Social, and Governance tabs using the dual sliders. The dashboard updates live. The Materiality Index summarises overall ESG intensity on a 0–100 scale.</div>
+          </div>
+          <div class="interp-card interp-card-formula">
+            <div class="interp-icon">📐</div>
+            <div class="interp-title">Formula Summary</div>
+            <div class="interp-body">
+              <code>Combined Score = (SI × 0.55) + (BS × 0.45)</code><br/>
+              SI = Stakeholder Impact · BS = Business Financial Significance<br/>
+              <code>Materiality Index = Σ(scores) ÷ (N × 5) × 100</code>
+            </div>
+          </div>
+          <div class="interp-card interp-card-action" id="interpAction">
+            <div class="interp-icon">✅</div>
+            <div class="interp-title">Recommended Actions</div>
+            <div class="interp-body" id="interpActionBody">Score topics to generate recommendations.</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="dash-footer">
+        <p>ESG Materiality Assessment Matrix B.1 · Version 2.0 · 35 Topics across Environmental, Social &amp; Governance</p>
+        <p>Frameworks: GRI 3 · ISSB IFRS S1 · ESRS 1 · BRSR Core · TCFD · SASB · TNFD</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB 2: GUIDE ──────────────────────────────────────────── -->
+  <div class="tab-panel" id="panel-guide">
+    <div class="panel-scroll guide-panel">
+
+      <div class="guide-hero">
+        <div class="guide-hero-text">
+          <h1>Guide, Formula &amp; Scoring Reference</h1>
+          <p>Everything you need to understand what this instrument measures, how to score each topic accurately, and how the formula translates your scores into a board-ready materiality determination.</p>
+        </div>
+        <div class="guide-hero-badge">B.1</div>
+      </div>
+
+      <!-- About -->
+      <div class="guide-card">
+        <div class="guide-card-title"><span>📌</span> About This Instrument</div>
+        <p>The ESG Materiality Assessment Matrix (B.1) is a structured tool for identifying and prioritising the environmental, social, and governance issues most significant to your organisation. It combines external stakeholder perspective with internal financial significance to produce a defensible, board-ready materiality determination.</p>
+        <p>This instrument covers <strong>35 topics</strong> across three pillars — 13 Environmental, 12 Social, 10 Governance — and is applicable across all industries. Each topic includes description, industry guidance, and framework references.</p>
+        <div class="guide-chips">
+          <span class="gchip">GRI 3 · Material Topics</span>
+          <span class="gchip">ISSB IFRS S1</span>
+          <span class="gchip">ESRS 1 (CSRD)</span>
+          <span class="gchip">BRSR Core (SEBI)</span>
+          <span class="gchip">TCFD</span>
+          <span class="gchip">SASB Materiality Map</span>
+          <span class="gchip">TNFD LEAP</span>
+        </div>
+      </div>
+
+      <!-- Formula -->
+      <div class="guide-card formula-guide-card">
+        <div class="guide-card-title"><span>📐</span> The Scoring Formula — Explained</div>
+
+        <div class="formula-display">
+          <div class="formula-main">Combined Score = (SI × 0.55) + (BS × 0.45)</div>
+          <div class="formula-sub">Materiality Index = Σ(Combined Scores) ÷ (N × 5) × 100</div>
+        </div>
+
+        <div class="formula-explain-grid">
+          <div class="fex-card fex-si">
+            <div class="fex-label">SI — Stakeholder Impact <span class="fex-weight">55% weight</span></div>
+            <p>Measures how significantly this ESG topic affects external stakeholders — communities, investors, employees, regulators, customers, and civil society. Weighted at <strong>55%</strong> because ESG originated as a stakeholder-facing discipline. This weight satisfies the <em>impact materiality</em> dimension of CSRD/ESRS and GRI double materiality.</p>
+          </div>
+          <div class="fex-card fex-bs">
+            <div class="fex-label">BS — Business Financial Significance <span class="fex-weight">45% weight</span></div>
+            <p>Measures how significantly this topic affects the company's financial position, results of operations, or long-term enterprise value. Weighted at <strong>45%</strong> to capture the investor-centric financial materiality required by ISSB IFRS S1, BRSR Core, and TCFD — ensuring the tool works for all major frameworks.</p>
+          </div>
+        </div>
+
+        <div class="threshold-table">
+          <div class="thresh-row thresh-head">
+            <span>Combined Score</span><span>Quadrant</span><span>Board Action Required</span>
+          </div>
+          <div class="thresh-row thresh-critical">
+            <span>4.50 – 5.00</span><span>🔴 HIGH — Critical</span>
+            <span>Board committee mandate · Binding target · Third-party assured disclosure</span>
+          </div>
+          <div class="thresh-row thresh-high">
+            <span>3.50 – 4.49</span><span>🔴 HIGH — Significant</span>
+            <span>Named owner · Annual target · Primary ESG report disclosure</span>
+          </div>
+          <div class="thresh-row thresh-med-high">
+            <span>2.50 – 3.49</span><span>🟡 MEDIUM — Active</span>
+            <span>Function-level ownership · Semi-annual monitoring · Sustainability report</span>
+          </div>
+          <div class="thresh-row thresh-med">
+            <span>2.00 – 2.49</span><span>🟡 MEDIUM — Emerging</span>
+            <span>Annual review · Watch for regulatory triggers · Next cycle reassessment</span>
+          </div>
+          <div class="thresh-row thresh-low">
+            <span>&lt; 2.00</span><span>⚪ LOW — Monitor</span>
+            <span>Retained on long list · Periodic review only · Document rationale</span>
+          </div>
+        </div>
+
+        <div class="index-explain">
+          <div class="index-title">📊 Materiality Index Interpretation</div>
+          <div class="index-grid">
+            <div class="idx-band idx-high">
+              <div class="idx-range">70 – 100</div>
+              <div class="idx-desc">Very high ESG intensity — typical for mining, oil &amp; gas, pharmaceutical manufacturing, fast fashion, high-street retail</div>
+            </div>
+            <div class="idx-band idx-med">
+              <div class="idx-range">50 – 69</div>
+              <div class="idx-desc">Typical for large manufacturers, logistics, financial institutions, professional services with complex supply chains</div>
+            </div>
+            <div class="idx-band idx-low">
+              <div class="idx-range">&lt; 50</div>
+              <div class="idx-desc">Low-impact sector or conservative scoring. Companies with mandatory disclosure should revisit with stronger stakeholder engagement</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scoring Scale Reference -->
+      <div class="guide-card">
+        <div class="guide-card-title"><span>🎚</span> Scoring Scale Reference</div>
+        <div class="scale-guide-grid">
+          <div class="sg-col">
+            <div class="sg-head sg-si-head">Stakeholder Impact (SI) — External Perspective</div>
+            <div class="sg-item"><span class="sb s1">1</span><div><strong>Insignificant</strong> — No meaningful stakeholder concern. Negligible or no external impact on communities, environment, or workers. Not on any investor or NGO radar.</div></div>
+            <div class="sg-item"><span class="sb s2">2</span><div><strong>Minor</strong> — Some awareness among a small stakeholder group. Limited media attention. Topic is manageable with standard business practice.</div></div>
+            <div class="sg-item"><span class="sb s3">3</span><div><strong>Moderate</strong> — Raised regularly by investors, employees, or NGOs. Sector peers are disclosing on this topic. Active regulatory interest exists.</div></div>
+            <div class="sg-item"><span class="sb s4">4</span><div><strong>Significant</strong> — Top priority for key investors or customers. Active regulatory scrutiny. Material risk of media attention, investor engagement, or contract loss if unaddressed.</div></div>
+            <div class="sg-item"><span class="sb s5">5</span><div><strong>Critical</strong> — Existential stakeholder concern. Active regulation or litigation. A failure here could trigger licence withdrawal, boycott, or supply chain disruption.</div></div>
+          </div>
+          <div class="sg-col">
+            <div class="sg-head sg-bs-head">Business Financial Significance (BS) — Internal Perspective</div>
+            <div class="sg-item"><span class="sb b1">1</span><div><strong>Negligible</strong> — No foreseeable financial consequence. Does not affect revenue, cost, risk exposure, or access to capital in any foreseeable scenario.</div></div>
+            <div class="sg-item"><span class="sb b2">2</span><div><strong>Limited</strong> — Minor cost implication. Would not appear in a risk register. Financial impact below 0.5% of EBITDA in a reasonable scenario.</div></div>
+            <div class="sg-item"><span class="sb b3">3</span><div><strong>Moderate</strong> — Impacts operating cost, talent attraction, or financing terms. Would appear in management discussion. 0.5–2% EBITDA impact range.</div></div>
+            <div class="sg-item"><span class="sb b4">4</span><div><strong>Material</strong> — A named principal risk in the board risk register. Affects investor confidence, cost of capital, or regulatory compliance cost. 2–5% EBITDA impact.</div></div>
+            <div class="sg-item"><span class="sb b5">5</span><div><strong>Critical</strong> — Could threaten the business model or trigger material regulatory enforcement. Financial impact exceeding 5% of EBITDA or existential in nature.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- How to Use -->
+      <div class="guide-card">
+        <div class="guide-card-title"><span>🔢</span> How to Complete the Assessment — 6 Steps</div>
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-body"><strong>Fill Organisation Details</strong> on the Dashboard tab. This appears in exports and printed reports.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-body"><strong>Read guidance</strong> on this tab until you understand the two axes and the scoring scale.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-body"><strong>Score each topic</strong> in the Environmental, Social, and Governance tabs. Use the dual sliders — SI and BS independently. Click "Show framework guidance" on any topic for regulatory context.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">4</div>
+            <div class="step-body"><strong>Document rationale</strong> in the Notes field for every topic scored 3 or above. Assurance providers will request this evidence.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">5</div>
+            <div class="step-body"><strong>Return to Dashboard</strong> to review the materiality matrix, priority ranking, and interpretation.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">6</div>
+            <div class="step-body"><strong>Export JSON</strong> to save your session. Import it later to resume. Print / PDF for board submission. Every page load starts blank — your data is never stored on a server.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB 3: ENVIRONMENTAL ────────────────────────────────────── -->
+  <div class="tab-panel" id="panel-E">
+    <div class="panel-scroll">
+      <div class="pillar-header pillar-E">
+        <div class="ph-left">
+          <div class="ph-badge">🌿 E</div>
+          <div>
+            <div class="ph-title">Environmental Pillar</div>
+            <div class="ph-sub">13 topics · Climate, energy, water, biodiversity, waste, circular economy, physical and transition risk</div>
+          </div>
+        </div>
+        <div class="ph-stats" id="ph-stats-E">
+          <div class="ph-stat"><span id="ph-scored-E">0</span><small>Scored</small></div>
+          <div class="ph-stat ph-high"><span id="ph-high-E">0</span><small>High</small></div>
+          <div class="ph-stat ph-med"><span id="ph-med-E">0</span><small>Medium</small></div>
+        </div>
+      </div>
+      <div class="topics-stack" id="topics-E"></div>
+    </div>
+  </div>
+
+  <!-- ── TAB 4: SOCIAL ──────────────────────────────────────────── -->
+  <div class="tab-panel" id="panel-S">
+    <div class="panel-scroll">
+      <div class="pillar-header pillar-S">
+        <div class="ph-left">
+          <div class="ph-badge">👥 S</div>
+          <div>
+            <div class="ph-title">Social Pillar</div>
+            <div class="ph-sub">12 topics · Workforce, human rights, community, data privacy, just transition</div>
+          </div>
+        </div>
+        <div class="ph-stats" id="ph-stats-S">
+          <div class="ph-stat"><span id="ph-scored-S">0</span><small>Scored</small></div>
+          <div class="ph-stat ph-high"><span id="ph-high-S">0</span><small>High</small></div>
+          <div class="ph-stat ph-med"><span id="ph-med-S">0</span><small>Medium</small></div>
+        </div>
+      </div>
+      <div class="topics-stack" id="topics-S"></div>
+    </div>
+  </div>
+
+  <!-- ── TAB 5: GOVERNANCE ──────────────────────────────────────── -->
+  <div class="tab-panel" id="panel-G">
+    <div class="panel-scroll">
+      <div class="pillar-header pillar-G">
+        <div class="ph-left">
+          <div class="ph-badge">🏛 G</div>
+          <div>
+            <div class="ph-title">Governance Pillar</div>
+            <div class="ph-sub">10 topics · Board structure, accountability, ethics, data integrity, risk governance</div>
+          </div>
+        </div>
+        <div class="ph-stats" id="ph-stats-G">
+          <div class="ph-stat"><span id="ph-scored-G">0</span><small>Scored</small></div>
+          <div class="ph-stat ph-high"><span id="ph-high-G">0</span><small>High</small></div>
+          <div class="ph-stat ph-med"><span id="ph-med-G">0</span><small>Medium</small></div>
+        </div>
+      </div>
+      <div class="topics-stack" id="topics-G"></div>
+    </div>
+  </div>
+
+</main>
+
+<input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImport(event)"/>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
