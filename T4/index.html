@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ESG vs CSR Comparison Matrix — B.4</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ══ TOP BRAND BAR ═══════════════════════════════════════════ -->
+<div class="brand-bar">
+  <div class="brand-bar-inner">
+    <div class="brand-title">Experts | Tools | Templates &mdash; From the Book &mdash; <span class="brand-highlight">ESG Master Classes</span></div>
+    <div class="brand-author">By Dr. SNK &nbsp;|&nbsp; AI Evangelist &nbsp;|&nbsp; A 98s9 Production</div>
+  </div>
+</div>
+
+<!-- ══ SITE HEADER ════════════════════════════════════════════ -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <span class="header-badge">B.4</span>
+      <div>
+        <div class="header-title">ESG vs CSR Comparison Matrix</div>
+        <div class="header-sub">22 dimensions · 4 thematic sections · Foundational · Operational · Regulatory · Strategic — for boards, investors, practitioners, and students globally</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" onclick="exportJSON()">⬇ Export</button>
+      <button class="btn btn-ghost" onclick="importJSON()">⬆ Import</button>
+      <button class="btn btn-ghost" onclick="exportCSV()">📄 CSV</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨 Print</button>
+    </div>
+  </div>
+</header>
+
+<!-- ══ TAB NAV ════════════════════════════════════════════════ -->
+<nav class="tab-nav">
+  <div class="tab-nav-inner">
+    <button class="tab-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">
+      <span class="tab-icon">📊</span><span class="tab-label">Dashboard</span>
+    </button>
+    <button class="tab-btn" data-tab="guide" onclick="switchTab('guide')">
+      <span class="tab-icon">📖</span><span class="tab-label">Guide &amp; Purpose</span>
+    </button>
+    <button class="tab-btn" data-tab="A" onclick="switchTab('A')">
+      <span class="tab-icon">🏛</span><span class="tab-label">Foundational</span>
+      <span class="tab-badge" id="badge-A">6</span>
+    </button>
+    <button class="tab-btn" data-tab="B" onclick="switchTab('B')">
+      <span class="tab-icon">⚙️</span><span class="tab-label">Operational</span>
+      <span class="tab-badge" id="badge-B">6</span>
+    </button>
+    <button class="tab-btn" data-tab="C" onclick="switchTab('C')">
+      <span class="tab-icon">⚖️</span><span class="tab-label">Regulatory</span>
+      <span class="tab-badge" id="badge-C">5</span>
+    </button>
+    <button class="tab-btn" data-tab="D" onclick="switchTab('D')">
+      <span class="tab-icon">📈</span><span class="tab-label">Strategic</span>
+      <span class="tab-badge" id="badge-D">5</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ══ PROGRESS STRIP ═════════════════════════════════════════ -->
+<div class="progress-strip">
+  <div class="progress-strip-inner">
+    <span id="progressLabel">22 dimensions across 4 sections</span>
+    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:100%"></div></div>
+    <span id="progressPct">Reference Tool</span>
+  </div>
+</div>
+
+<!-- ══ TAB PANELS ════════════════════════════════════════════ -->
+<main class="tab-panels">
+
+  <!-- ── DASHBOARD ─────────────────────────────────────────── -->
+  <div class="tab-panel active" id="panel-dashboard">
+    <div class="panel-scroll">
+
+      <!-- Hero -->
+      <section class="dash-hero">
+        <div class="dash-hero-text">
+          <h1>ESG vs CSR — Why the Distinction Matters</h1>
+          <p>Environmental, Social and Governance (ESG) and Corporate Social Responsibility (CSR) are frequently conflated — in boardrooms, in media, and in corporate communications. They are not the same thing. They originate from different intellectual traditions, serve different audiences, operate under different governance frameworks, face different regulatory obligations, and have fundamentally different consequences for capital access, enterprise value, and legal liability. This matrix documents 22 dimensions across which ESG and CSR differ — providing the analytical foundation for boards, investors, students, and practitioners to understand and articulate the distinction precisely.</p>
+        </div>
+        <div class="dash-hero-stat">
+          <div class="hero-num">22</div>
+          <div class="hero-label">Comparison Dimensions</div>
+          <div class="hero-subs">
+            <div class="hero-sub">6 Foundational</div>
+            <div class="hero-sub">6 Operational</div>
+            <div class="hero-sub">5 Regulatory</div>
+            <div class="hero-sub">5 Strategic</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick ref KPI row -->
+      <section class="dash-section">
+        <div class="section-hd">
+          <span class="section-hd-icon">⚡</span>
+          <h2>The Five Critical Distinctions — Quick Reference</h2>
+          <span class="section-hd-sub">The differences most frequently confused or misrepresented</span>
+        </div>
+        <div class="quick-ref-grid">
+          <div class="qr-card qr-a">
+            <div class="qr-icon">🎯</div>
+            <div class="qr-title">Origin</div>
+            <div class="qr-esg"><strong>ESG:</strong> Investor-led, 2004 UN report, designed to measure systemic investment risk</div>
+            <div class="qr-csr"><strong>CSR:</strong> Company-led, 1950s–1970s philanthropy tradition, designed to build reputation</div>
+          </div>
+          <div class="qr-card qr-b">
+            <div class="qr-icon">⚖️</div>
+            <div class="qr-title">Legal Status</div>
+            <div class="qr-esg"><strong>ESG:</strong> Mandatory in EU (CSRD), India (BRSR Core), Singapore, Australia, California</div>
+            <div class="qr-csr"><strong>CSR:</strong> Voluntary globally — India's CSR spend mandate is philanthropy, not ESG disclosure</div>
+          </div>
+          <div class="qr-card qr-c">
+            <div class="qr-icon">🔍</div>
+            <div class="qr-title">External Assurance</div>
+            <div class="qr-esg"><strong>ESG:</strong> Mandatory assurance (ISAE 3000/3410) under CSRD, BRSR Core, SGX frameworks</div>
+            <div class="qr-csr"><strong>CSR:</strong> Self-declared. Independent verification rare, non-standardised, not legally required</div>
+          </div>
+          <div class="qr-card qr-d">
+            <div class="qr-icon">💰</div>
+            <div class="qr-title">Capital Markets</div>
+            <div class="qr-esg"><strong>ESG:</strong> Feeds directly into ratings, index inclusion, loan pricing, and M&amp;A due diligence</div>
+            <div class="qr-csr"><strong>CSR:</strong> Invisible to capital markets — not used in credit ratings, equity models, or M&amp;A</div>
+          </div>
+          <div class="qr-card qr-e">
+            <div class="qr-icon">📢</div>
+            <div class="qr-title">Negative Disclosure</div>
+            <div class="qr-esg"><strong>ESG:</strong> Double materiality requires disclosure of negative impacts — omissions are assurance failures</div>
+            <div class="qr-csr"><strong>CSR:</strong> Company chooses which negatives to acknowledge — optimistic framing is normal practice</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Summary matrix -->
+      <section class="dash-section">
+        <div class="section-hd">
+          <span class="section-hd-icon">📋</span>
+          <h2>Summary Comparison — All 22 Dimensions</h2>
+          <span class="section-hd-sub">Click any row to navigate to the full analysis</span>
+        </div>
+        <div class="summary-table-wrap" id="summaryTable"></div>
+      </section>
+
+      <!-- Who should read this -->
+      <section class="dash-section audience-section">
+        <div class="section-hd">
+          <span class="section-hd-icon">👥</span>
+          <h2>Who Needs This Distinction — and Why</h2>
+        </div>
+        <div class="audience-grid" id="audienceGrid"></div>
+      </section>
+
+      <div class="dash-footer">
+        <p>ESG vs CSR Comparison Matrix B.4 · Version 2.0 · 22 Dimensions · 4 Sections</p>
+        <p>Reference frameworks: GRI 3 · ISSB IFRS S1 · ESRS 1 (CSRD) · BRSR Core · TCFD · SASB · ISO 26000 · UN Global Compact</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── GUIDE TAB ──────────────────────────────────────────── -->
+  <div class="tab-panel" id="panel-guide">
+    <div class="panel-scroll guide-panel">
+      <div class="guide-hero">
+        <div class="guide-hero-text">
+          <h1>Guide &amp; Purpose — How to Use This Matrix</h1>
+          <p>This instrument is designed for multiple audiences and use cases: board briefings, MBA teaching, investor due diligence, corporate ESG programme design, regulatory compliance mapping, and media/communications guidance. Understanding which section is most relevant to your purpose will maximise its value.</p>
+        </div>
+        <div class="guide-hero-badge">B.4</div>
+      </div>
+
+      <div class="guide-card">
+        <div class="guide-card-title"><span>📌</span> Why This Matrix Was Extended Beyond 8 Dimensions</div>
+        <p>The original B.4 template contained 8 comparison dimensions — sufficient for a quick board briefing but insufficient for the complexity of the global ESG regulatory landscape in 2026. The distinction between ESG and CSR now has legal consequences in the EU, India, Singapore, Australia, and California that require more precise articulation than a single-dimension comparison can provide.</p>
+        <p>This extended matrix covers 22 dimensions across four thematic areas: <strong>Foundational</strong> (philosophical and structural origins), <strong>Operational</strong> (how each works in practice), <strong>Regulatory</strong> (what the law actually requires), and <strong>Strategic</strong> (what the distinction means for capital, value, and liability). Each dimension includes a synthesis statement — the single most important insight from that comparison.</p>
+        <div class="guide-chips">
+          <span class="gchip">GRI Universal Standards 2021</span>
+          <span class="gchip">ISSB IFRS S1 (2023)</span>
+          <span class="gchip">ESRS 1 — CSRD</span>
+          <span class="gchip">BRSR Core (SEBI 2023)</span>
+          <span class="gchip">ISO 26000 (CSR standard)</span>
+          <span class="gchip">UN Global Compact (2000)</span>
+          <span class="gchip">EU CSDDD (2024)</span>
+          <span class="gchip">California SB 253/261</span>
+        </div>
+      </div>
+
+      <div class="guide-card">
+        <div class="guide-card-title"><span>🎯</span> How to Use Each Section</div>
+        <div class="use-cases-grid">
+          <div class="uc-card uc-a">
+            <div class="uc-label">🏛 Section A — Foundational Differences</div>
+            <div class="uc-best">Best for: board education, student induction, investor relations teams explaining ESG to portfolio companies</div>
+            <div class="uc-content">Covers origin, purpose, audience, information architecture, time horizon, and treatment of negatives. These six dimensions establish the philosophical case for why ESG and CSR are different disciplines that should not be merged under one label.</div>
+          </div>
+          <div class="uc-card uc-b">
+            <div class="uc-label">⚙️ Section B — Operational Differences</div>
+            <div class="uc-best">Best for: sustainability managers building ESG programmes, CFOs designing data infrastructure, assurance providers scoping engagements</div>
+            <div class="uc-content">Covers measurability, governance accountability, external assurance, legal status, scope of coverage, and financial report integration. These six dimensions explain why an existing CSR function cannot simply be "upgraded" to deliver ESG without structural change.</div>
+          </div>
+          <div class="uc-card uc-c">
+            <div class="uc-label">⚖️ Section C — Regulatory Context</div>
+            <div class="uc-best">Best for: legal and compliance teams, multi-national companies navigating overlapping obligations, regulators and policymakers</div>
+            <div class="uc-content">Covers EU, US, India, Asia-Pacific, and supply chain legal frameworks. Each entry distinguishes between what is legally required under ESG frameworks and what is (or is not) required under CSR frameworks. Critical for compliance planning.</div>
+          </div>
+          <div class="uc-card uc-d">
+            <div class="uc-label">📈 Section D — Strategic & Financial</div>
+            <div class="uc-best">Best for: CFOs, investors, M&A teams, CEO communications, ESG rating engagement</div>
+            <div class="uc-content">Covers cost of capital, M&A due diligence, index inclusion, talent, and greenwashing liability. These five dimensions make the financial case for why ESG is strategic while CSR is operational — and why the distinction matters for enterprise value.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-card">
+        <div class="guide-card-title"><span>🌍</span> Global Applicability — Why This Is Not Just a Western Framework</div>
+        <p>The ESG vs CSR distinction has historically been presented through a European and North American lens. This matrix deliberately covers India (BRSR, Companies Act CSR spending), Asia-Pacific (SGX, Japan FSA, ASEAN Taxonomy), and the specific regulatory architectures of the US, EU, and Australia. The global picture reveals a consistent pattern across jurisdictions: CSR obligations are philanthropic and voluntary; ESG obligations are disclosure-based and increasingly mandatory.</p>
+        <p>India's Companies Act Section 135 (mandatory CSR spending of 2% of net profits for qualifying companies) is frequently cited as evidence that CSR is legally required. It is not ESG. The Companies Act mandate requires charitable spending — funding schools, hospitals, and clean water projects. It does not require disclosure of GHG emissions, board gender diversity, or supplier human rights due diligence. BRSR Core does. These are separate legal obligations with different purposes, different accountability mechanisms, and different consequences for non-compliance.</p>
+      </div>
+
+      <div class="guide-card">
+        <div class="guide-card-title"><span>⚠️</span> Common Conflation Errors — and Why They Matter</div>
+        <div class="errors-list">
+          <div class="error-item">
+            <div class="error-num">1</div>
+            <div class="error-body"><strong>"Our CSR report covers our ESG."</strong> — A CSR report covers what the company chose to write about. An ESG disclosure covers what applicable frameworks require to be disclosed, including material negative impacts. These are categorically different in scope, rigour, and legal status.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">2</div>
+            <div class="error-body"><strong>"We already do ESG through our CSR programme."</strong> — A community investment programme, employee volunteering initiative, or charitable donation budget is CSR. It does not constitute ESG unless it is accompanied by: a materiality assessment, quantitative KPIs against a recognised standard, board governance oversight, and (where required) third-party assurance.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">3</div>
+            <div class="error-body"><strong>"ESG and CSR are the same, just different labels."</strong> — This conflation is harmless in casual conversation and dangerous in regulatory and investor contexts. A company that presents its CSR report as ESG compliance to a regulator operating under CSRD, BRSR Core, or ISSB standards faces enforcement action for material misrepresentation.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">4</div>
+            <div class="error-body"><strong>"We are sustainable because we have a CSR department."</strong> — CSR department headcount and budget is not an ESG KPI under any recognised framework. ISSB IFRS S1, GRI 3, and ESRS 2 require disclosure of board ESG competence, management ESG governance structures, and ESG-linked executive compensation — none of which are satisfied by the existence of a CSR function.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">5</div>
+            <div class="error-body"><strong>"ESG is just the new word for CSR."</strong> — This is the most common and most damaging conflation. ESG emerged specifically because CSR had failed to produce comparable, assured, financially material corporate sustainability data. ESG was invented to replace what CSR could not deliver — not to rebrand it.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION TABS (A/B/C/D) ─────────────────────────────── -->
+  <div class="tab-panel" id="panel-A">
+    <div class="panel-scroll">
+      <div class="section-pillar-header pillar-A">
+        <div class="ph-left">
+          <div class="ph-badge">🏛 Section A</div>
+          <div>
+            <div class="ph-title">Foundational Differences</div>
+            <div class="ph-sub">6 dimensions · Origin · Purpose · Audience · Information · Time · Negatives</div>
+          </div>
+        </div>
+        <div class="ph-count"><span>6</span><small>Dimensions</small></div>
+      </div>
+      <div class="dims-stack" id="dims-A"></div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-B">
+    <div class="panel-scroll">
+      <div class="section-pillar-header pillar-B">
+        <div class="ph-left">
+          <div class="ph-badge">⚙️ Section B</div>
+          <div>
+            <div class="ph-title">Operational Differences</div>
+            <div class="ph-sub">6 dimensions · Measurability · Governance · Assurance · Legal Status · Scope · Financials</div>
+          </div>
+        </div>
+        <div class="ph-count"><span>6</span><small>Dimensions</small></div>
+      </div>
+      <div class="dims-stack" id="dims-B"></div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-C">
+    <div class="panel-scroll">
+      <div class="section-pillar-header pillar-C">
+        <div class="ph-left">
+          <div class="ph-badge">⚖️ Section C</div>
+          <div>
+            <div class="ph-title">Regulatory &amp; Legal Context</div>
+            <div class="ph-sub">5 dimensions · EU · US · India · Asia-Pacific · Supply Chain</div>
+          </div>
+        </div>
+        <div class="ph-count"><span>5</span><small>Dimensions</small></div>
+      </div>
+      <div class="dims-stack" id="dims-C"></div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-D">
+    <div class="panel-scroll">
+      <div class="section-pillar-header pillar-D">
+        <div class="ph-left">
+          <div class="ph-badge">📈 Section D</div>
+          <div>
+            <div class="ph-title">Strategic &amp; Financial Implications</div>
+            <div class="ph-sub">5 dimensions · Capital · M&amp;A · Index · Talent · Greenwashing</div>
+          </div>
+        </div>
+        <div class="ph-count"><span>5</span><small>Dimensions</small></div>
+      </div>
+      <div class="dims-stack" id="dims-D"></div>
+    </div>
+  </div>
+
+</main>
+
+<input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImport(event)"/>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
