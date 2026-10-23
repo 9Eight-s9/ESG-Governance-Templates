@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ESG Mastery — Chapter Quiz</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ══ BRAND BAR ════════════════════════════════════════════ -->
+<div class="brand-bar">
+  <div class="brand-title">Experts | Tools | Templates &mdash; From the Book &mdash; <span class="brand-hl">ESG Master Classes</span></div>
+  <div class="brand-author">By Dr. SNK &nbsp;|&nbsp; AI Evangelist &nbsp;|&nbsp; A 98s9 Production</div>
+</div>
+
+<!-- ══ MAIN LAYOUT ══════════════════════════════════════════ -->
+<div class="app-layout">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-badge">ESG</div>
+      <div>
+        <div class="sidebar-title">Mastery Quiz</div>
+        <div class="sidebar-sub">20 Chapters · 160 Questions</div>
+      </div>
+    </div>
+
+    <!-- User name -->
+    <div class="sidebar-name-wrap">
+      <label class="sidebar-name-label">Your Name</label>
+      <input type="text" id="userName" class="sidebar-name-input" placeholder="Enter your name…" oninput="updateName()"/>
+    </div>
+
+    <!-- Progress pill -->
+    <div class="sidebar-progress-wrap">
+      <div class="sp-label"><span id="spAnswered">0</span> / 160 answered</div>
+      <div class="sp-track"><div class="sp-fill" id="spFill"></div></div>
+    </div>
+
+    <!-- Chapter nav -->
+    <nav class="sidebar-nav" id="sidebarNav">
+      <!-- Intro tab -->
+      <button class="nav-item active" data-tab="intro" onclick="switchTab('intro')">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Introduction</span>
+      </button>
+      <!-- Chapter tabs injected by JS -->
+      <div id="chapterNavItems"></div>
+      <!-- Results tab -->
+      <button class="nav-item" data-tab="results" onclick="switchTab('results')">
+        <span class="nav-icon">🏆</span>
+        <span class="nav-label">Results &amp; Certificate</span>
+        <span class="nav-badge nav-badge-results" id="resultsBadge" style="display:none">!</span>
+      </button>
+    </nav>
+
+    <!-- Sidebar actions -->
+    <div class="sidebar-actions">
+      <button class="sa-btn sa-submit" onclick="submitAll()" id="submitBtn">Submit All</button>
+      <button class="sa-btn sa-reset" onclick="resetAll()">↺ Reset All Answers</button>
+      <button class="sa-btn sa-print" onclick="printQuiz()">🖨 Print Questions &amp; Answers</button>
+      <button class="sa-btn sa-cert-print" onclick="printCertificate()">🏆 Print Certificate</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content" id="mainContent">
+
+    <!-- ── INTRO PANEL ─────────────────────────────────────── -->
+    <div class="tab-panel active" id="panel-intro">
+      <div class="intro-wrap">
+        <div class="intro-hero">
+          <div class="intro-hero-text">
+            <div class="intro-badge">ESG MASTERY</div>
+            <h1>Chapter Quiz Assessment</h1>
+            <p>Test your understanding of all 20 chapters of ESG Mastery — from foundational principles through to emerging frontiers. This assessment contains <strong>160 multiple-choice questions</strong>, 8 per chapter, covering Foundation, Intermediate, and Advanced difficulty levels.</p>
+          </div>
+          <div class="intro-logo">
+            <div class="logo-ring">
+              <div class="logo-inner">98s9</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="intro-cards">
+          <div class="ic-card ic-blue">
+            <div class="ic-icon">✍️</div>
+            <div class="ic-title">How to Complete</div>
+            <ol class="ic-list">
+              <li>Enter your name in the sidebar field above</li>
+              <li>Select a chapter using the left navigation</li>
+              <li>Read each question carefully and select one answer using the radio buttons</li>
+              <li>Navigate freely between chapters — your answers are saved automatically</li>
+              <li>When ready, click <strong>Submit All</strong> to see your score</li>
+            </ol>
+          </div>
+          <div class="ic-card ic-purple">
+            <div class="ic-icon">📋</div>
+            <div class="ic-title">Quiz Structure</div>
+            <div class="ic-grid">
+              <div class="ic-stat"><div class="ic-num">20</div><div class="ic-lbl">Chapters</div></div>
+              <div class="ic-stat"><div class="ic-num">160</div><div class="ic-lbl">Questions</div></div>
+              <div class="ic-stat"><div class="ic-num">8</div><div class="ic-lbl">Per Chapter</div></div>
+              <div class="ic-stat"><div class="ic-num">3</div><div class="ic-lbl">Difficulty Levels</div></div>
+            </div>
+            <div class="diff-legend">
+              <span class="diff-pill diff-f">Foundation</span>
+              <span class="diff-pill diff-i">Intermediate</span>
+              <span class="diff-pill diff-a">Advanced</span>
+            </div>
+          </div>
+          <div class="ic-card ic-green">
+            <div class="ic-icon">🎯</div>
+            <div class="ic-title">Scoring &amp; Review</div>
+            <ul class="ic-list">
+              <li>Each correct answer = <strong>1 point</strong></li>
+              <li>Answers are hidden until you click <strong>Submit All</strong></li>
+              <li>After submission, click <strong>Review Answers</strong> to see detailed explanations</li>
+              <li>Print includes full answer key — review answers are only revealed after submission</li>
+              <li>A personalised certificate is generated on the Results tab upon completion</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="intro-tip">
+          💡 <strong>Tip:</strong> You can complete chapters in any order. The sidebar shows your progress per chapter. Click <em>Submit All</em> only when you have answered all questions you wish to attempt — answers cannot be changed after submission.
+        </div>
+
+        <button class="start-btn" onclick="switchTab('ch-1')">Begin Quiz — Chapter 1 →</button>
+      </div>
+    </div>
+
+    <!-- ── CHAPTER PANELS (injected by JS) ────────────────── -->
+    <div id="chapterPanels"></div>
+
+    <!-- ── RESULTS PANEL ──────────────────────────────────── -->
+    <div class="tab-panel" id="panel-results">
+      <div class="results-wrap" id="resultsWrap">
+        <div class="results-placeholder">
+          <div style="font-size:3rem;margin-bottom:16px">🏆</div>
+          <h2>Results &amp; Certificate</h2>
+          <p>Complete the quiz and click <strong>Submit All</strong> to see your results and generate your certificate.</p>
+          <button class="start-btn" onclick="submitAll()" style="margin-top:20px">Submit All Answers</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ══ CERTIFICATE (print only / modal) ═══════════════════ -->
+<div id="certModal" class="cert-modal" style="display:none">
+  <div class="cert-overlay" onclick="closeCert()"></div>
+  <div class="certificate" id="certificateEl">
+    <div class="cert-border">
+      <div class="cert-header">
+        <div class="cert-logo">
+          <div class="cert-logo-ring"><div class="cert-logo-inner">98s9</div></div>
+        </div>
+        <div class="cert-brand">ESG Master Classes</div>
+        <div class="cert-brand-sub">By Dr. SNK | AI Evangelist | A 98s9 Production</div>
+      </div>
+      <div class="cert-title-wrap">
+        <div class="cert-title">Certificate of Completion</div>
+        <div class="cert-subtitle">ESG Mastery — Chapter Assessment</div>
+      </div>
+      <div class="cert-body">
+        <div class="cert-presented">This certifies that</div>
+        <div class="cert-name" id="certName">—</div>
+        <div class="cert-text">has successfully completed the <strong>ESG Mastery Chapter Assessment</strong>, demonstrating knowledge of Environmental, Social and Governance principles across all 20 chapters of <em>ESG Mastery: From Theory to Execution</em>.</div>
+        <div class="cert-score-wrap">
+          <div class="cert-score-box">
+            <div class="cert-score-val" id="certScore">—</div>
+            <div class="cert-score-lbl">Final Score</div>
+          </div>
+          <div class="cert-score-box">
+            <div class="cert-score-val" id="certPct">—</div>
+            <div class="cert-score-lbl">Percentage</div>
+          </div>
+          <div class="cert-score-box">
+            <div class="cert-score-val" id="certGrade">—</div>
+            <div class="cert-score-lbl">Grade</div>
+          </div>
+        </div>
+      </div>
+      <div class="cert-footer">
+        <div class="cert-sig-block">
+          <div class="cert-sig">Dr. SNK</div>
+          <div class="cert-sig-line"></div>
+          <div class="cert-sig-name">Dr. Sathyanarayana Kaliprasad</div>
+          <div class="cert-sig-title">AI Evangelist · Author, ESG Master Classes</div>
+        </div>
+        <div class="cert-date-block">
+          <div class="cert-date-val" id="certDate">—</div>
+          <div class="cert-sig-line"></div>
+          <div class="cert-sig-name">Date of Completion</div>
+        </div>
+      </div>
+      <div class="cert-watermark">ESG MASTERY</div>
+    </div>
+  </div>
+  <button class="cert-close" onclick="closeCert()">✕ Close</button>
+</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
